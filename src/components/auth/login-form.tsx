@@ -1,9 +1,11 @@
 import * as React from "react"
 import { Bookmark } from "lucide-react"
+import { reatomComponent } from "@reatom/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useAuthStore } from "@/stores/auth-store"
+import { isLoadingAtom } from "@/stores/auth/atoms"
+import { login } from "@/stores/auth/actions"
 import { usernameSchema } from "@/lib/utils/validators"
 
 /**
@@ -12,10 +14,10 @@ import { usernameSchema } from "@/lib/utils/validators"
  * Uses a simple username input that creates or retrieves an existing user.
  * Data is isolated per username in IndexedDB.
  */
-export function LoginForm() {
+export const LoginForm = reatomComponent(() => {
   const [username, setUsername] = React.useState("")
   const [error, setError] = React.useState<string | null>(null)
-  const { login, isLoading } = useAuthStore()
+  const isLoading = isLoadingAtom()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -87,4 +89,4 @@ export function LoginForm() {
       </div>
     </div>
   )
-}
+}, "LoginForm")

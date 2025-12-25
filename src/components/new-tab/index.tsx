@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Trash2 } from "lucide-react"
+import { reatomComponent } from "@reatom/react"
 import { SpacesSidebar } from "./spaces-sidebar"
 import { GroupTabs } from "./group-tabs"
 import { BookmarkGrid } from "./bookmark-grid"
@@ -19,9 +20,13 @@ import {
 } from "@/components/ui/alert-dialog"
 import type { Space, Group, Bookmark, EntityType } from "@/types"
 
-// Store hooks
-import { useAuthStore } from "@/stores/auth-store"
-import { useUIStore } from "@/stores/ui-store"
+// Reatom atoms and actions
+import { userAtom } from "@/stores/auth/atoms"
+import { logout } from "@/stores/auth/actions"
+import { activeSpaceIdAtom, selectedGroupIdAtom } from "@/stores/ui/atoms"
+import { setActiveSpace, setSelectedGroup } from "@/stores/ui/actions"
+
+// Hooks
 import { useSpaces, useSpaceActions } from "@/hooks/use-spaces"
 import { useGroups, useGroupActions } from "@/hooks/use-groups"
 import { useBookmarks, useBookmarkActions } from "@/hooks/use-bookmarks"
@@ -48,23 +53,20 @@ interface DeleteState {
  * - Top: Group tabs + User menu
  * - Center: Bookmark grid
  *
- * State management uses Zustand stores with IndexedDB persistence.
+ * State management uses Reatom stores with IndexedDB persistence.
  */
-export function NewTabPage() {
-  // Auth state
-  const user = useAuthStore((state) => state.user)
-  const logout = useAuthStore((state) => state.logout)
+export const NewTabPage = reatomComponent(() => {
+  // Auth state from atoms
+  const user = userAtom()
 
-  // UI state
-  const activeSpaceId = useUIStore((state) => state.activeSpaceId)
-  const selectedGroupId = useUIStore((state) => state.selectedGroupId)
-  const setActiveSpace = useUIStore((state) => state.setActiveSpace)
-  const setSelectedGroup = useUIStore((state) => state.setSelectedGroup)
+  // UI state from atoms
+  const activeSpaceId = activeSpaceIdAtom()
+  const selectedGroupId = selectedGroupIdAtom()
 
   // Theme
   const { theme, setTheme } = useTheme()
 
-  // Data from stores
+  // Data from hooks (which call atoms internally)
   const spaces = useSpaces()
   const groups = useGroups(activeSpaceId)
   const bookmarks = useBookmarks(selectedGroupId)
@@ -90,7 +92,7 @@ export function NewTabPage() {
     if (spaces.length > 0 && !activeSpaceId) {
       setActiveSpace(spaces[0].id)
     }
-  }, [spaces, activeSpaceId, setActiveSpace])
+  }, [spaces, activeSpaceId])
 
   // Set initial selected group when space changes or groups load
   React.useEffect(() => {
@@ -99,7 +101,7 @@ export function NewTabPage() {
     } else if (groups.length === 0) {
       setSelectedGroup(null)
     }
-  }, [groups, selectedGroupId, setSelectedGroup])
+  }, [groups, selectedGroupId])
 
   // Reset selected group when space changes
   React.useEffect(() => {
@@ -110,7 +112,7 @@ export function NewTabPage() {
         setSelectedGroup(groups[0].id)
       }
     }
-  }, [activeSpaceId, groups, selectedGroupId, setSelectedGroup])
+  }, [activeSpaceId, groups, selectedGroupId])
 
   // Modal handlers
   const openCreateModal = (entityType: EntityType) => {
@@ -373,4 +375,4 @@ export function NewTabPage() {
       </AlertDialog>
     </div>
   )
-}
+}, "NewTabPage")

@@ -23,6 +23,14 @@
       "status": "completed",
       "createdAt": "2025-12-25T12:51:49.426Z",
       "updatedAt": "2025-12-25T13:01:12.905Z"
+    },
+    {
+      "id": "mjlmd1xznv809w006a",
+      "name": "Zustand to Reatom Migration",
+      "description": "Migrate state management from Zustand to Reatom, preserving all existing functionality while leveraging Reatom's atomic state management",
+      "status": "completed",
+      "createdAt": "2025-12-25T15:50:24.791Z",
+      "updatedAt": "2025-12-25T16:07:56.827Z"
     }
   ],
   "plans": [
@@ -161,6 +169,95 @@
       "status": "active",
       "createdAt": "2025-12-25T15:27:29.505Z",
       "updatedAt": "2025-12-25T15:27:40.419Z"
+    },
+    {
+      "id": "mjlmd8hwu37e20aiqkm",
+      "featureId": "mjlmd1xznv809w006a",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Phase 1: Setup - Install @reatom/core and @reatom/react, configure context provider in App.tsx",
+          "status": "pending"
+        },
+        {
+          "id": "step-1",
+          "description": "Phase 2: Auth Module - Convert auth-store.ts to Reatom atoms/actions (user, isAuthenticated, isLoading, isInitialized, login, logout, updateSettings)",
+          "status": "pending"
+        },
+        {
+          "id": "step-2",
+          "description": "Phase 3: UI Module - Convert ui-store.ts to Reatom atoms/actions (activeSpaceId, selectedGroupId, theme, modal state) with localStorage persistence",
+          "status": "pending"
+        },
+        {
+          "id": "step-3",
+          "description": "Phase 4: Data Module - Convert data-store.ts to Reatom atoms/actions (spaces, groups, bookmarks arrays, all CRUD operations, computed getters)",
+          "status": "pending"
+        },
+        {
+          "id": "step-4",
+          "description": "Phase 5: Hooks Layer - Rewrite use-spaces.ts, use-groups.ts, use-bookmarks.ts, use-theme.ts to use Reatom selectors and actions",
+          "status": "pending"
+        },
+        {
+          "id": "step-5",
+          "description": "Phase 6: Component Integration - Update auth-guard.tsx, new-tab/index.tsx and any components to use reatomComponent or useAtom/useAction hooks",
+          "status": "pending"
+        },
+        {
+          "id": "step-6",
+          "description": "Phase 7: Cleanup - Remove zustand dependency, update AGENTS.md documentation, verify all functionality works",
+          "status": "pending"
+        }
+      ],
+      "status": "archived",
+      "createdAt": "2025-12-25T15:50:33.284Z",
+      "updatedAt": "2025-12-25T15:50:33.284Z"
+    },
+    {
+      "id": "mjlmn4u09xp6dc51n2l",
+      "featureId": "mjlmd1xznv809w006a",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Phase 1: Setup - Install @reatom/core and @reatom/react, remove zustand, create directory structure",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Phase 2: Auth Module - Create auth/atoms.ts and auth/actions.ts",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Phase 3: UI Module - Create ui/atoms.ts with theme persistence and ui/actions.ts",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Phase 4: Data Module - Create data/atoms.ts, data/computed.ts, and data/actions.ts",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Phase 5: Hooks Migration - Update use-spaces.ts, use-groups.ts, use-bookmarks.ts, use-theme.ts",
+          "status": "completed"
+        },
+        {
+          "id": "step-5",
+          "description": "Phase 6: Component Updates - Update auth-guard.tsx, login-form.tsx, new-tab/index.tsx, main.tsx",
+          "status": "pending"
+        },
+        {
+          "id": "step-6",
+          "description": "Phase 7: Cleanup - Remove old store files, create stores/index.ts, update AGENTS.md",
+          "status": "completed",
+          "meta": "Phase 7 (Cleanup) completed: Deleted old Zustand files, created stores/index.ts, updated AGENTS.md, verified builds work"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-25T15:58:15.096Z",
+      "updatedAt": "2025-12-25T16:07:55.715Z"
     }
   ],
   "logs": [
@@ -219,6 +316,20 @@
       "type": "note",
       "content": "Full init-plan.md implementation complete. All 4 phases done: Foundation (stores, storage, types), Auth (login, guard, theme), Core CRUD (hooks, UI integration), Polish (manifest, build config). AGENTS.md updated with complete project structure and architecture documentation.",
       "timestamp": "2025-12-25T15:27:50.868Z"
+    },
+    {
+      "id": "mjlmietnd6a0oso7exg",
+      "featureId": "mjlmd1xznv809w006a",
+      "type": "note",
+      "content": "Created comprehensive Zustand to Reatom migration plan at plans/add-reatom.md. Plan includes 7 phases: Setup, Auth Module, UI Module, Data Module, Hooks Layer, Component Integration, Cleanup. Estimated ~7-8 hours total effort. All code examples provided for atoms, actions, computed values, and React integration patterns.",
+      "timestamp": "2025-12-25T15:54:34.763Z"
+    },
+    {
+      "id": "mjlmzowwdwzo7hfhjyi",
+      "featureId": "mjlmd1xznv809w006a",
+      "type": "note",
+      "content": "Migration complete! All 7 phases finished. Zustand replaced with Reatom v1000. All builds pass (web app and extension). Lint errors are pre-existing shadcn/ui issues unrelated to migration.",
+      "timestamp": "2025-12-25T16:08:00.992Z"
     }
   ],
   "notes": [
@@ -232,7 +343,19 @@
         "implementation"
       ],
       "createdAt": "2025-12-25T15:27:48.944Z"
+    },
+    {
+      "id": "mjlmdgo2kztozqhxud",
+      "featureId": "mjlmd1xznv809w006a",
+      "content": "## Zustand to Reatom Migration Analysis\n\n### Current State (Zustand)\n**3 Stores:**\n1. `auth-store.ts` (141 lines) - user, isAuthenticated, isLoading, isInitialized + initialize(), login(), logout(), updateSettings()\n2. `data-store.ts` (391 lines) - spaces[], groups[], bookmarks[], isLoading + loadAllData() + CRUD for each entity + reorder operations\n3. `ui-store.ts` (109 lines) - activeSpaceId, selectedGroupId, modalType, modalEntity, theme + navigation/modal/theme actions\n\n**4 Hooks:**\n1. `use-spaces.ts` - useSpaces(), useActiveSpace(), useSpaceActions()\n2. `use-groups.ts` - useGroups(spaceId), useSelectedGroup(), useGroupActions()\n3. `use-bookmarks.ts` - useBookmarks(groupId), useBookmarkActions()\n4. `use-theme.ts` - useTheme()\n\n### Key Migration Considerations:\n1. **Async operations**: All CRUD operations use async IndexedDB - must use `wrap()` for context preservation\n2. **Computed values**: getGroupsBySpace, getBookmarksByGroup → convert to `computed()`\n3. **Persistence**: Theme uses localStorage, data uses IndexedDB via idb-keyval\n4. **Side effects**: Theme applies CSS class to document.documentElement\n5. **Cross-component dependencies**: Hooks access multiple stores (e.g., useSpaceActions needs auth + data + ui)\n6. **Component patterns**: Currently use `useStore(selector)` pattern, migrate to `reatomComponent` where beneficial",
+      "tags": [
+        "migration",
+        "zustand",
+        "reatom",
+        "architecture"
+      ],
+      "createdAt": "2025-12-25T15:50:43.874Z"
     }
   ],
-  "activeFeatureId": "mjlfzdwy813mhux244e"
+  "activeFeatureId": "mjlmd1xznv809w006a"
 }

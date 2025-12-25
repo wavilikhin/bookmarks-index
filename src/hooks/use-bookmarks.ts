@@ -1,27 +1,32 @@
-// Bookmarks hook
-import { useDataStore } from "@/stores/data-store"
-import { useAuthStore } from "@/stores/auth-store"
+// Bookmarks hook - Reatom migration
+// Note: These hooks are designed to be used inside reatomComponent wrappers
+// where atom calls are automatically tracked
+
+import { getBookmarksByGroupId } from "@/stores/data/computed"
+import { userAtom } from "@/stores/auth/atoms"
+import {
+  createBookmark,
+  updateBookmark,
+  deleteBookmark,
+  reorderBookmarks,
+} from "@/stores/data/actions"
 import type { CreateBookmarkInput, UpdateBookmarkInput } from "@/types"
 
 /**
  * useBookmarks - Returns bookmarks for a specific group
+ * Must be called inside a reatomComponent
  */
 export function useBookmarks(groupId: string | null) {
-  const getBookmarksByGroup = useDataStore((state) => state.getBookmarksByGroup)
-  
   if (!groupId) return []
-  return getBookmarksByGroup(groupId)
+  return getBookmarksByGroupId(groupId)()
 }
 
 /**
  * useBookmarkActions - Returns CRUD actions for bookmarks
+ * Can be called inside or outside reatomComponent
  */
 export function useBookmarkActions() {
-  const user = useAuthStore((state) => state.user)
-  const createBookmark = useDataStore((state) => state.createBookmark)
-  const updateBookmark = useDataStore((state) => state.updateBookmark)
-  const deleteBookmark = useDataStore((state) => state.deleteBookmark)
-  const reorderBookmarks = useDataStore((state) => state.reorderBookmarks)
+  const user = userAtom()
 
   return {
     createBookmark: async (input: CreateBookmarkInput) => {

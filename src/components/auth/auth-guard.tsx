@@ -1,8 +1,15 @@
 import * as React from "react"
 import { Loader2 } from "lucide-react"
-import { useAuthStore } from "@/stores/auth-store"
-import { useDataStore } from "@/stores/data-store"
-import { useUIStore } from "@/stores/ui-store"
+import { reatomComponent } from "@reatom/react"
+import {
+  userAtom,
+  isAuthenticatedAtom,
+  isLoadingAtom,
+  isInitializedAtom,
+} from "@/stores/auth/atoms"
+import { isDataLoadingAtom } from "@/stores/data/atoms"
+import { initializeAuth } from "@/stores/auth/actions"
+import { loadAllData } from "@/stores/data/actions"
 import { LoginForm } from "./login-form"
 
 interface AuthGuardProps {
@@ -18,18 +25,18 @@ interface AuthGuardProps {
  * - Loads user data when authenticated
  * - Renders children when ready
  */
-export function AuthGuard({ children }: AuthGuardProps) {
-  const { user, isAuthenticated, isLoading, isInitialized, initialize } =
-    useAuthStore()
-  const { loadAllData, isLoading: isDataLoading } = useDataStore()
-  const { initializeTheme } = useUIStore()
+export const AuthGuard = reatomComponent<AuthGuardProps>(({ children }) => {
+  const user = userAtom()
+  const isAuthenticated = isAuthenticatedAtom()
+  const isLoading = isLoadingAtom()
+  const isInitialized = isInitializedAtom()
+  const isDataLoading = isDataLoadingAtom()
   const [isDataLoaded, setIsDataLoaded] = React.useState(false)
 
   // Initialize auth on mount
   React.useEffect(() => {
-    initialize()
-    initializeTheme()
-  }, [initialize, initializeTheme])
+    initializeAuth()
+  }, [])
 
   // Load user data when authenticated
   React.useEffect(() => {
@@ -38,7 +45,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
         setIsDataLoaded(true)
       })
     }
-  }, [isAuthenticated, user, isDataLoaded, loadAllData])
+  }, [isAuthenticated, user, isDataLoaded])
 
   // Reset data loaded state on logout
   React.useEffect(() => {
@@ -75,4 +82,4 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   // Render children when everything is ready
   return <>{children}</>
-}
+}, "AuthGuard")

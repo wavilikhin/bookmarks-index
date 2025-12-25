@@ -1,39 +1,46 @@
-// Groups hook
-import { useDataStore } from "@/stores/data-store"
-import { useUIStore } from "@/stores/ui-store"
-import { useAuthStore } from "@/stores/auth-store"
+// Groups hook - Reatom migration
+// Note: These hooks are designed to be used inside reatomComponent wrappers
+// where atom calls are automatically tracked
+
+import { groupsAtom } from "@/stores/data/atoms"
+import { getGroupsBySpaceId } from "@/stores/data/computed"
+import { selectedGroupIdAtom } from "@/stores/ui/atoms"
+import { userAtom } from "@/stores/auth/atoms"
+import {
+  createGroup,
+  updateGroup,
+  deleteGroup,
+  reorderGroups,
+} from "@/stores/data/actions"
+import { setSelectedGroup } from "@/stores/ui/actions"
 import type { CreateGroupInput, UpdateGroupInput } from "@/types"
 
 /**
  * useGroups - Returns groups for a specific space
+ * Must be called inside a reatomComponent
  */
 export function useGroups(spaceId: string | null) {
-  const getGroupsBySpace = useDataStore((state) => state.getGroupsBySpace)
-  
   if (!spaceId) return []
-  return getGroupsBySpace(spaceId)
+  return getGroupsBySpaceId(spaceId)()
 }
 
 /**
  * useSelectedGroup - Returns the currently selected group
+ * Must be called inside a reatomComponent
  */
 export function useSelectedGroup() {
-  const selectedGroupId = useUIStore((state) => state.selectedGroupId)
-  const groups = useDataStore((state) => state.groups)
-  
+  const selectedGroupId = selectedGroupIdAtom()
+  const groups = groupsAtom()
+
   return selectedGroupId ? groups.find((g) => g.id === selectedGroupId) : undefined
 }
 
 /**
  * useGroupActions - Returns CRUD actions for groups
+ * Can be called inside or outside reatomComponent
  */
 export function useGroupActions() {
-  const user = useAuthStore((state) => state.user)
-  const createGroup = useDataStore((state) => state.createGroup)
-  const updateGroup = useDataStore((state) => state.updateGroup)
-  const deleteGroup = useDataStore((state) => state.deleteGroup)
-  const reorderGroups = useDataStore((state) => state.reorderGroups)
-  const setSelectedGroup = useUIStore((state) => state.setSelectedGroup)
+  const user = userAtom()
 
   return {
     createGroup: async (input: CreateGroupInput) => {
@@ -51,6 +58,6 @@ export function useGroupActions() {
       if (!user) throw new Error("User not authenticated")
       return reorderGroups(user.id, spaceId, orderedIds)
     },
-    setSelectedGroup,
+    setSelectedGroup: (groupId: string | null) => setSelectedGroup(groupId),
   }
 }

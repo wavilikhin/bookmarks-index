@@ -1,37 +1,43 @@
-// Spaces hook
-import { useDataStore } from "@/stores/data-store"
-import { useUIStore } from "@/stores/ui-store"
-import { useAuthStore } from "@/stores/auth-store"
+// Spaces hook - Reatom migration
+// Note: These hooks are designed to be used inside reatomComponent wrappers
+// where atom calls are automatically tracked
+
+import { sortedSpacesAtom, getSpaceById } from "@/stores/data/computed"
+import { activeSpaceIdAtom } from "@/stores/ui/atoms"
+import { userAtom } from "@/stores/auth/atoms"
+import {
+  createSpace,
+  updateSpace,
+  deleteSpace,
+  reorderSpaces,
+} from "@/stores/data/actions"
+import { setActiveSpace } from "@/stores/ui/actions"
 import type { CreateSpaceInput, UpdateSpaceInput } from "@/types"
 
 /**
- * useSpaces - Returns all non-archived spaces
+ * useSpaces - Returns all non-archived spaces (sorted)
+ * Must be called inside a reatomComponent
  */
 export function useSpaces() {
-  const spaces = useDataStore((state) => state.spaces)
-  return spaces.sort((a, b) => a.order - b.order)
+  return sortedSpacesAtom()
 }
 
 /**
  * useActiveSpace - Returns the currently active space
+ * Must be called inside a reatomComponent
  */
 export function useActiveSpace() {
-  const activeSpaceId = useUIStore((state) => state.activeSpaceId)
-  const getSpaceById = useDataStore((state) => state.getSpaceById)
-  
-  return activeSpaceId ? getSpaceById(activeSpaceId) : undefined
+  const activeSpaceId = activeSpaceIdAtom()
+  if (!activeSpaceId) return undefined
+  return getSpaceById(activeSpaceId)()
 }
 
 /**
  * useSpaceActions - Returns CRUD actions for spaces
+ * Can be called inside or outside reatomComponent
  */
 export function useSpaceActions() {
-  const user = useAuthStore((state) => state.user)
-  const createSpace = useDataStore((state) => state.createSpace)
-  const updateSpace = useDataStore((state) => state.updateSpace)
-  const deleteSpace = useDataStore((state) => state.deleteSpace)
-  const reorderSpaces = useDataStore((state) => state.reorderSpaces)
-  const setActiveSpace = useUIStore((state) => state.setActiveSpace)
+  const user = userAtom()
 
   return {
     createSpace: async (input: CreateSpaceInput) => {
@@ -49,6 +55,6 @@ export function useSpaceActions() {
       if (!user) throw new Error("User not authenticated")
       return reorderSpaces(user.id, orderedIds)
     },
-    setActiveSpace,
+    setActiveSpace: (spaceId: string | null) => setActiveSpace(spaceId),
   }
 }

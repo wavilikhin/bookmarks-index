@@ -29,7 +29,7 @@ This project uses **shadcn/ui** with the **Base-Lyra** style (built on `@base-ui
 - `@/lib/storage` - IndexedDB storage layer
 - `@/lib/utils` - Entity and validation utilities
 - `@/hooks` - Custom hooks
-- `@/stores` - Zustand state stores
+- `@/stores` - Reatom state stores
 - `@/types` - TypeScript type definitions
 
 ## Commands
@@ -90,9 +90,17 @@ src/
 │   │   └── validators.ts       # Zod schemas
 │   └── utils.ts                # cn() utility
 ├── stores/
-│   ├── auth-store.ts           # User auth state (login/logout)
-│   ├── data-store.ts           # Spaces, Groups, Bookmarks CRUD
-│   └── ui-store.ts             # UI state (selections, modals, theme)
+│   ├── auth/
+│   │   ├── atoms.ts            # User, isLoading, isInitialized atoms
+│   │   └── actions.ts          # initializeAuth, login, logout actions
+│   ├── data/
+│   │   ├── atoms.ts            # Spaces, Groups, Bookmarks atoms
+│   │   ├── computed.ts         # Derived state (getGroupsBySpaceId, etc.)
+│   │   └── actions.ts          # CRUD actions for all entities
+│   ├── ui/
+│   │   ├── atoms.ts            # activeSpaceId, theme, modal state
+│   │   └── actions.ts          # setActiveSpace, setTheme, modal actions
+│   └── index.ts                # Consolidated re-exports
 ├── types/
 │   └── index.ts                # All TypeScript interfaces
 ├── App.tsx                     # Root with AuthGuard wrapper
@@ -110,13 +118,72 @@ User Action → Hook → Store → IndexedDB
             UI Update
 ```
 
-### State Management (Zustand)
+### State Management (Reatom)
 
-| Store | Purpose | Key State |
-|-------|---------|-----------|
-| `auth-store` | Authentication | `user`, `isAuthenticated`, `isLoading` |
-| `data-store` | Entity CRUD | `spaces`, `groups`, `bookmarks` |
-| `ui-store` | UI state | `activeSpaceId`, `selectedGroupId`, `theme` |
+This project uses **Reatom v1000** for state management with atomic state design.
+
+| Module | Purpose | Key Exports |
+|--------|---------|-------------|
+| `auth/` | Authentication | `userAtom`, `isAuthenticatedAtom`, `login`, `logout` |
+| `data/` | Entity CRUD | `spacesAtom`, `groupsAtom`, `bookmarksAtom`, CRUD actions |
+| `ui/` | UI state | `activeSpaceIdAtom`, `themeAtom`, `modalTypeAtom` |
+
+#### Reatom Patterns
+
+```typescript
+// Atoms - reactive state containers
+import { atom, computed, action, wrap } from "@reatom/core"
+
+// Define atoms with initial value and name
+export const userAtom = atom<User | null>(null, "auth.user")
+
+// Computed values - derived state
+export const isAuthenticatedAtom = computed(
+  () => userAtom() !== null,
+  "auth.isAuthenticated"
+)
+
+// Actions - state mutations (sync or async)
+export const login = action(async (username: string) => {
+  // Use wrap() for async operations to preserve context
+  const user = await wrap(getUser(userId))
+  userAtom.set(user)
+}, "auth.login")
+```
+
+#### React Integration
+
+```typescript
+// Use reatomComponent for reactive components
+import { reatomComponent } from "@reatom/react"
+import { userAtom, isLoadingAtom } from "@/stores"
+
+export const MyComponent = reatomComponent(() => {
+  // Call atoms directly inside reatomComponent - they auto-subscribe
+  const user = userAtom()
+  const isLoading = isLoadingAtom()
+
+  // Call actions directly
+  const handleLogin = () => login("username")
+
+  return <div>{user?.username}</div>
+}, "MyComponent")
+```
+
+#### Setup in main.tsx
+
+```typescript
+import { context, clearStack, connectLogger } from "@reatom/core"
+import { reatomContext } from "@reatom/react"
+
+clearStack() // Clear default context
+const rootFrame = context.start()
+
+// Wrap app with reatomContext.Provider
+<reatomContext.Provider value={rootFrame}>
+  <App />
+</reatomContext.Provider>
+```
 
 ### Storage Layer (IndexedDB)
 
