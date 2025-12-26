@@ -10,7 +10,7 @@
     "build:watch": "vite build --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "tsc": "tsc --noEmit",
+    "tsc": "tsc -b --noEmit",
     "format": "prettier --write .",
     "preview": "vite preview"
   },

@@ -67,9 +67,8 @@ You are invoked when users need frontend interfaces—components, pages, applica
 ### Path Aliases (ALWAYS USE)
 
 ```tsx
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Button, Card } from '@/shared/ui'
+import { cn } from '@/lib/utils'
 ```
 
 ### Available shadcn/ui Components
@@ -225,7 +224,7 @@ All code must be:
 - Purple gradients on white backgrounds
 - Predictable layouts and component patterns
 - Cookie-cutter design lacking context-specific character
-- Relative imports instead of path aliases (`@/components/ui/...`)
+- Relative imports instead of path aliases (`@/shared/ui...`)
 
 ### Complexity Matching
 

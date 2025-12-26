@@ -132,23 +132,20 @@ This project uses **Reatom v1000** for state management with atomic state design
 
 ```typescript
 // Atoms - reactive state containers
-import { atom, computed, action, wrap } from "@reatom/core";
+import { atom, computed, action, wrap } from '@reatom/core'
 
 // Define atoms with initial value and name
-export const userAtom = atom<User | null>(null, "auth.user");
+export const userAtom = atom<User | null>(null, 'auth.user')
 
 // Computed values - derived state
-export const isAuthenticatedAtom = computed(
-  () => userAtom() !== null,
-  "auth.isAuthenticated",
-);
+export const isAuthenticatedAtom = computed(() => userAtom() !== null, 'auth.isAuthenticated')
 
 // Actions - state mutations (sync or async)
 export const login = action(async (username: string) => {
   // Use wrap() for async operations to preserve context
-  const user = await wrap(getUser(userId));
-  userAtom.set(user);
-}, "auth.login");
+  const user = await wrap(getUser(userId))
+  userAtom.set(user)
+}, 'auth.login')
 ```
 
 #### React Integration
@@ -214,21 +211,21 @@ User (user_xxx)
 
 ```typescript
 // Spaces
-const spaces = useSpaces();
-const activeSpace = useActiveSpace();
-const { createSpace, updateSpace, deleteSpace } = useSpaceActions();
+const spaces = useSpaces()
+const activeSpace = useActiveSpace()
+const { createSpace, updateSpace, deleteSpace } = useSpaceActions()
 
 // Groups
-const groups = useGroups(spaceId);
-const selectedGroup = useSelectedGroup();
-const { createGroup, updateGroup, deleteGroup } = useGroupActions();
+const groups = useGroups(spaceId)
+const selectedGroup = useSelectedGroup()
+const { createGroup, updateGroup, deleteGroup } = useGroupActions()
 
 // Bookmarks
-const bookmarks = useBookmarks(groupId);
-const { createBookmark, updateBookmark, deleteBookmark } = useBookmarkActions();
+const bookmarks = useBookmarks(groupId)
+const { createBookmark, updateBookmark, deleteBookmark } = useBookmarkActions()
 
 // Theme
-const { theme, setTheme } = useTheme();
+const { theme, setTheme } = useTheme()
 ```
 
 ## Installed shadcn/ui Components
@@ -251,7 +248,7 @@ const { theme, setTheme } = useTheme();
 
 1. **Always use bun** - Not npm or yarn
 2. **Use shadcn CLI** - `bunx shadcn@latest add <component>`
-3. **Use path aliases** - `@/components/ui/button` not relative paths
+3. **Use path aliases** - `@/shared/uibutton` not relative paths
 4. **Use hooks** - Don't access stores directly in components
 5. **Use cn()** - For conditional Tailwind classes
 6. **Follow Base-Lyra patterns** - `render` prop for composition

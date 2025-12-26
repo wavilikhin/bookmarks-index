@@ -1,8 +1,8 @@
 // Entity utility functions
-import { nanoid } from "nanoid";
-import { IdPrefixes } from "@/lib/storage/keys";
+import { nanoid } from 'nanoid'
+import { IdPrefixes } from '@/lib/storage/keys'
 
-type EntityPrefix = keyof typeof IdPrefixes;
+type EntityPrefix = keyof typeof IdPrefixes
 
 /**
  * Generate a unique ID with an entity-type prefix
@@ -10,7 +10,7 @@ type EntityPrefix = keyof typeof IdPrefixes;
  * @returns A prefixed nanoid (e.g., "space_abc123xyz")
  */
 export function generateId(prefix: EntityPrefix): string {
-  return `${IdPrefixes[prefix]}${nanoid(10)}`;
+  return `${IdPrefixes[prefix]}${nanoid(10)}`
 }
 
 /**
@@ -19,11 +19,11 @@ export function generateId(prefix: EntityPrefix): string {
  * TODO: rewrite using .extend()
  */
 export function createTimestamps(): { createdAt: string; updatedAt: string } {
-  const now = new Date().toISOString();
+  const now = new Date().toISOString()
   return {
     createdAt: now,
-    updatedAt: now,
-  };
+    updatedAt: now
+  }
 }
 
 /**
@@ -32,6 +32,6 @@ export function createTimestamps(): { createdAt: string; updatedAt: string } {
  */
 export function updateTimestamp(): { updatedAt: string } {
   return {
-    updatedAt: new Date().toISOString(),
-  };
+    updatedAt: new Date().toISOString()
+  }
 }

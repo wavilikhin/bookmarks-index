@@ -1,30 +1,28 @@
-import { Bookmark } from "lucide-react";
-import { bindField, reatomComponent } from "@reatom/react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { login } from "@/stores/auth/actions";
-import { usernameSchema } from "@/lib/utils/validators";
-import { reatomForm, wrap } from "@reatom/core";
-import z from "zod";
+import { Bookmark } from 'lucide-react'
+import { bindField, reatomComponent } from '@reatom/react'
+import { Button, Input, Label } from '@/shared/ui'
+import { login } from '@/stores/auth/actions'
+import { usernameSchema } from '@/lib/utils/validators'
+import { reatomForm, wrap } from '@reatom/core'
+import z from 'zod'
 
 const loginForm = reatomForm(
   {
-    username: "",
+    username: ''
   },
   {
-    name: "loginForm",
+    name: 'loginForm',
     schema: z.object({
-      username: usernameSchema,
+      username: usernameSchema
     }),
     validateOnBlur: true,
     onSubmit: async ({ username }) => {
-      console.log("loginForm.onSubmit", username);
-      await wrap(login(username));
-      loginForm.reset();
-    },
-  },
-);
+      console.log('loginForm.onSubmit', username)
+      await wrap(login(username))
+      loginForm.reset()
+    }
+  }
+)
 
 /**
  * LoginForm - Username-based authentication for local storage
@@ -42,20 +40,16 @@ export const LoginForm = reatomComponent(() => {
             <Bookmark className="h-7 w-7 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              Bookmarks Index
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Organize your bookmarks with spaces and groups
-            </p>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Bookmarks Index</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Organize your bookmarks with spaces and groups</p>
           </div>
         </div>
 
         {/* Login form */}
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            loginForm.submit();
+            e.preventDefault()
+            loginForm.submit()
           }}
           className="space-y-4"
         >
@@ -75,7 +69,7 @@ export const LoginForm = reatomComponent(() => {
           </div>
 
           <Button type="submit" className="w-full">
-            {login.pending() ? "Signing in..." : "Sign in"}
+            {login.pending() ? 'Signing in...' : 'Sign in'}
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">
@@ -86,5 +80,5 @@ export const LoginForm = reatomComponent(() => {
         </form>
       </div>
     </div>
-  );
-}, "LoginForm");
+  )
+}, 'LoginForm')

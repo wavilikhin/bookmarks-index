@@ -1,13 +1,12 @@
-import { AuthGuard } from "@/components/auth/auth-guard";
-import { NewTabPage } from "@/components/new-tab";
-import { reatomComponent } from "@reatom/react";
+import { reatomComponent } from '@reatom/react'
+import { AuthGuard, NewTabPage } from '@/shared/ui'
 
 const App = reatomComponent(() => {
   return (
     <AuthGuard>
       <NewTabPage />
     </AuthGuard>
-  );
-}, "App");
+  )
+}, 'App')
 
-export default App;
+export default App

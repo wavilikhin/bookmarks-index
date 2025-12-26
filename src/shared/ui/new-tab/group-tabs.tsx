@@ -1,29 +1,23 @@
-import * as React from "react";
+import * as React from 'react'
+import { Plus, MoreHorizontal, Pencil, Trash2, GripVertical } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import {
-  Plus,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  GripVertical,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
+  Button,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import type { Group } from "@/types";
+  DropdownMenuSeparator
+} from '@/shared/ui'
+import type { Group } from '@/types'
 
 interface GroupTabsProps {
-  groups: Group[];
-  activeGroupId: string | null;
-  onSelectGroup: (groupId: string) => void;
-  onAddGroup: () => void;
-  onEditGroup: (group: Group) => void;
-  onDeleteGroup: (group: Group) => void;
+  groups: Group[]
+  activeGroupId: string | null
+  onSelectGroup: (groupId: string) => void
+  onAddGroup: () => void
+  onEditGroup: (group: Group) => void
+  onDeleteGroup: (group: Group) => void
 }
 
 /**
@@ -39,32 +33,32 @@ export function GroupTabs({
   onSelectGroup,
   onAddGroup,
   onEditGroup,
-  onDeleteGroup,
+  onDeleteGroup
 }: GroupTabsProps) {
-  const tabsRef = React.useRef<HTMLDivElement>(null);
-  const [showLeftFade, setShowLeftFade] = React.useState(false);
-  const [showRightFade, setShowRightFade] = React.useState(false);
+  const tabsRef = React.useRef<HTMLDivElement>(null)
+  const [showLeftFade, setShowLeftFade] = React.useState(false)
+  const [showRightFade, setShowRightFade] = React.useState(false)
 
   // Check for overflow and show fade indicators
   const checkOverflow = React.useCallback(() => {
-    if (!tabsRef.current) return;
-    const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
-    setShowLeftFade(scrollLeft > 0);
-    setShowRightFade(scrollLeft + clientWidth < scrollWidth - 1);
-  }, []);
+    if (!tabsRef.current) return
+    const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current
+    setShowLeftFade(scrollLeft > 0)
+    setShowRightFade(scrollLeft + clientWidth < scrollWidth - 1)
+  }, [])
 
   React.useEffect(() => {
-    checkOverflow();
-    const el = tabsRef.current;
+    checkOverflow()
+    const el = tabsRef.current
     if (el) {
-      el.addEventListener("scroll", checkOverflow);
-      window.addEventListener("resize", checkOverflow);
+      el.addEventListener('scroll', checkOverflow)
+      window.addEventListener('resize', checkOverflow)
     }
     return () => {
-      if (el) el.removeEventListener("scroll", checkOverflow);
-      window.removeEventListener("resize", checkOverflow);
-    };
-  }, [checkOverflow, groups]);
+      if (el) el.removeEventListener('scroll', checkOverflow)
+      window.removeEventListener('resize', checkOverflow)
+    }
+  }, [checkOverflow, groups])
 
   if (groups.length === 0) {
     return (
@@ -80,7 +74,7 @@ export function GroupTabs({
           Add Group
         </Button>
       </div>
-    );
+    )
   }
 
   return (
@@ -94,7 +88,7 @@ export function GroupTabs({
       <div
         ref={tabsRef}
         className="flex items-center gap-1 overflow-x-auto px-4 scrollbar-none"
-        style={{ scrollbarWidth: "none" }}
+        style={{ scrollbarWidth: 'none' }}
       >
         {groups.map((group) => (
           <GroupTab
@@ -123,62 +117,47 @@ export function GroupTabs({
         <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-8 bg-gradient-to-l from-background to-transparent" />
       )}
     </div>
-  );
+  )
 }
 
 interface GroupTabProps {
-  group: Group;
-  isActive: boolean;
-  onSelect: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
+  group: Group
+  isActive: boolean
+  onSelect: () => void
+  onEdit: () => void
+  onDelete: () => void
 }
 
-function GroupTab({
-  group,
-  isActive,
-  onSelect,
-  onEdit,
-  onDelete,
-}: GroupTabProps) {
-  const [showMenu, setShowMenu] = React.useState(false);
+function GroupTab({ group, isActive, onSelect, onEdit, onDelete }: GroupTabProps) {
+  const [showMenu, setShowMenu] = React.useState(false)
 
   return (
     <div
       className={cn(
-        "group relative flex shrink-0 items-center gap-1.5 px-3 py-3 transition-colors duration-150",
-        "cursor-pointer select-none",
-        isActive
-          ? "text-foreground"
-          : "text-muted-foreground hover:text-foreground",
+        'group relative flex shrink-0 items-center gap-1.5 px-3 py-3 transition-colors duration-150',
+        'cursor-pointer select-none',
+        isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
       )}
       onClick={onSelect}
       role="tab"
       tabIndex={0}
       aria-selected={isActive}
       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          onSelect();
+        if (e.key === 'Enter' || e.key === ' ') {
+          onSelect()
         }
       }}
     >
       {/* Drag handle - visible on hover for future drag implementation */}
       <GripVertical
         className={cn(
-          "size-3 shrink-0 text-muted-foreground/50 opacity-0 transition-opacity",
-          "group-hover:opacity-100",
+          'size-3 shrink-0 text-muted-foreground/50 opacity-0 transition-opacity',
+          'group-hover:opacity-100'
         )}
       />
 
       {/* Group name */}
-      <span
-        className={cn(
-          "text-sm transition-all",
-          isActive ? "font-medium" : "font-normal",
-        )}
-      >
-        {group.name}
-      </span>
+      <span className={cn('text-sm transition-all', isActive ? 'font-medium' : 'font-normal')}>{group.name}</span>
 
       {/* Context menu */}
       <DropdownMenu open={showMenu} onOpenChange={setShowMenu}>
@@ -186,9 +165,9 @@ function GroupTab({
           render={
             <button
               className={cn(
-                "flex size-5 items-center justify-center rounded opacity-0 transition-opacity",
-                "hover:bg-foreground/10 focus:opacity-100 group-hover:opacity-100",
-                showMenu && "opacity-100",
+                'flex size-5 items-center justify-center rounded opacity-0 transition-opacity',
+                'hover:bg-foreground/10 focus:opacity-100 group-hover:opacity-100',
+                showMenu && 'opacity-100'
               )}
               onClick={(e) => e.stopPropagation()}
             />
@@ -199,8 +178,8 @@ function GroupTab({
         <DropdownMenuContent align="start" sideOffset={4}>
           <DropdownMenuItem
             onClick={(e) => {
-              e.stopPropagation();
-              onEdit();
+              e.stopPropagation()
+              onEdit()
             }}
           >
             <Pencil className="mr-2 size-3.5" />
@@ -210,8 +189,8 @@ function GroupTab({
           <DropdownMenuItem
             variant="destructive"
             onClick={(e) => {
-              e.stopPropagation();
-              onDelete();
+              e.stopPropagation()
+              onDelete()
             }}
           >
             <Trash2 className="mr-2 size-3.5" />
@@ -221,11 +200,9 @@ function GroupTab({
       </DropdownMenu>
 
       {/* Active indicator underline */}
-      {isActive && (
-        <div className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-primary" />
-      )}
+      {isActive && <div className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full bg-primary" />}
     </div>
-  );
+  )
 }
 
-export type { GroupTabsProps };
+export type { GroupTabsProps }
