@@ -19,7 +19,7 @@ interface BookmarkGridProps {
  */
 export function BookmarkGrid({ bookmarks, onAddBookmark, onEditBookmark, onDeleteBookmark }: BookmarkGridProps) {
   return (
-    <div className="flex flex-1 items-start justify-center px-4 py-8 md:px-8">
+    <div className="flex flex-1 items-center justify-center px-4 py-8 md:px-8">
       <div
         className={cn(
           'grid gap-2',
