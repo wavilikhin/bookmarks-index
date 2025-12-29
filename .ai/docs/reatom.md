@@ -513,6 +513,81 @@ const fetchData = action(async () => {
 
 ## Collections
 
+### Array of Atoms Pattern (Recommended for Entity Lists)
+
+**This is the primary pattern for managing collections in this project.** Each item in the array is wrapped in its own atom, enabling granular reactivity and efficient updates.
+
+```typescript
+import { atom, action, withIndexedDb, type Atom } from '@reatom/core'
+import type { Bookmark } from './bookmarks.types'
+
+// Array where each item is an atom - enables individual item updates
+export const bookmarksAtom = atom<Atom<Bookmark>[]>([], 'bookmarks.atom').extend(
+  withIndexedDb({ key: StorageKeys.bookmarks(userIdAtom()!) })
+)
+
+// Create: wrap new entity in atom before adding to array
+export const createBookmark = action((input: CreateBookmarkInput) => {
+  const bookmarkDraft: Bookmark = {
+    id: generateId('bookmark'),
+    userId: userIdAtom()!,
+    ...input,
+    order: bookmarksAtom().filter((b) => b().groupId === input.groupId).length,
+    isPinned: false,
+    isArchived: false,
+    ...createTimestamps()
+  }
+
+  bookmarksAtom.set((currentBookmarks) => [...currentBookmarks, atom(bookmarkDraft)])
+}, 'bookmarks.create')
+
+// Update: find the atom and update it directly (no array mutation)
+export const updateBookmark = action((bookmarkId: string, partialBookmark: UpdateBookmarkInput) => {
+  const bookmarkToUpdateAtom = bookmarksAtom().find((b) => b().id === bookmarkId)
+  if (!bookmarkToUpdateAtom) throw new Error('Bookmark not found')
+
+  bookmarkToUpdateAtom.set((currentBookmark) => ({
+    ...currentBookmark,
+    ...partialBookmark,
+    ...updateTimestamp()
+  }))
+}, 'bookmarks.update')
+
+// Delete: filter out the atom from the array
+export const deleteBookmark = action((bookmarkId: string) => {
+  bookmarksAtom.set((currentBookmarks) => currentBookmarks.filter((b) => b().id !== bookmarkId))
+}, 'bookmarks.delete')
+```
+
+**Why Array of Atoms?**
+
+- **Granular updates**: Changing one item doesn't trigger re-renders for components watching other items
+- **Direct item access**: Find and update specific items without recreating the entire array
+- **Memory efficient**: Only changed atoms notify their subscribers
+
+**Reading items in components:**
+
+```tsx
+const BookmarkList = reatomComponent(() => {
+  const bookmarks = bookmarksAtom()
+
+  return (
+    <ul>
+      {bookmarks.map((bookmarkAtom) => (
+        <BookmarkItem key={bookmarkAtom().id} bookmarkAtom={bookmarkAtom} />
+      ))}
+    </ul>
+  )
+}, 'BookmarkList')
+
+// Each item component subscribes only to its own atom
+const BookmarkItem = reatomComponent<{ bookmarkAtom: Atom<Bookmark> }>(({ bookmarkAtom }) => {
+  const bookmark = bookmarkAtom() // Subscribe to individual item
+
+  return <li>{bookmark.title}</li>
+}, 'BookmarkItem')
+```
+
 ### reatomArray
 
 Manage array state with immutable methods.
@@ -1219,20 +1294,77 @@ const response = await fetch('/api/data')
 const data = await response.json()
 ```
 
-### 3. Organize by Feature
+### 3. Organize by Domain
+
+This project uses a domain-driven folder structure. Each entity has its own folder with standardized files:
 
 ```
-src/
-├── features/
-│   ├── auth/
-│   │   ├── atoms.ts      # auth-related atoms
-│   │   ├── actions.ts    # auth-related actions
-│   │   └── components/   # auth UI components
-│   ├── bookmarks/
-│   │   ├── atoms.ts
-│   │   ├── actions.ts
-│   │   └── components/
+src/domain/<entity>/
+├── <entity>.model.ts    # Atoms + Actions (all state & logic)
+├── <entity>.types.ts    # Types + Input types
+├── lib/                 # Helper functions (seed data, utils)
+│   ├── getSeed<Entity>.ts
+│   └── index.ts         # Barrel export
+└── index.ts             # Consolidated public exports
 ```
+
+**Example: bookmarks domain**
+
+```typescript
+// bookmarks.types.ts - Types only
+import type { BaseEntity } from '@/types'
+
+export interface Bookmark extends BaseEntity {
+  userId: string
+  spaceId: string
+  groupId: string
+  title: string
+  url: string
+  order: number
+  isPinned: boolean
+  isArchived: boolean
+}
+
+export type CreateBookmarkInput = Pick<Bookmark, 'spaceId' | 'groupId' | 'title' | 'url' | 'description'>
+export type UpdateBookmarkInput = Partial<Omit<Bookmark, 'id' | 'userId' | 'createdAt'>>
+```
+
+```typescript
+// bookmarks.model.ts - All atoms and actions
+import { atom, action, withIndexedDb, type Atom } from '@reatom/core'
+import type { Bookmark, CreateBookmarkInput, UpdateBookmarkInput } from './bookmarks.types'
+
+export const bookmarksAtom = atom<Atom<Bookmark>[]>([], 'bookmarks.atom').extend(
+  withIndexedDb({ key: StorageKeys.bookmarks(userIdAtom()!) })
+)
+
+export const createBookmark = action((input: CreateBookmarkInput) => {
+  // ... implementation
+}, 'bookmarks.create')
+
+export const updateBookmark = action((bookmarkId: string, input: UpdateBookmarkInput) => {
+  // ... implementation
+}, 'bookmarks.update')
+
+export const deleteBookmark = action((bookmarkId: string) => {
+  // ... implementation
+}, 'bookmarks.delete')
+```
+
+```typescript
+// index.ts - Public API barrel export
+export type { Bookmark, CreateBookmarkInput, UpdateBookmarkInput } from './bookmarks.types'
+export { bookmarksAtom, createBookmark, updateBookmark, deleteBookmark } from './bookmarks.model'
+export { getSeedBookmarks } from './lib'
+```
+
+**Key rules:**
+
+1. Use `.model.ts` and `.types.ts` suffixes for unique, searchable file names
+2. All atoms and actions for a domain go in one `.model.ts` file
+3. Types in `.types.ts`, import with `import type`
+4. Helper functions (seed generators, validators) go in `/lib`
+5. Each folder has `index.ts` that re-exports public API
 
 ### 4. Use Computed for Derived State
 
@@ -1290,14 +1422,29 @@ const Counter = reatomComponent(() => {
   return <div>{count}</div>
 }, 'Counter')
 
-// AVOID: useAtom hooks add unnecessary complexity
-const Counter = () => {
-  const [count] = useAtom(counter)
-  return <div>{count}</div>
-}
+// AVOID: Don't create wrapper hooks for atoms - use atoms directly
+// BAD: Creating useBookmarks() hook that just returns bookmarksAtom()
+// GOOD: Use bookmarksAtom() directly in reatomComponent
 ```
 
-### 8. No React StrictMode or Context Provider
+### 8. Chain Extensions Inline with Actions
+
+```typescript
+// GOOD: Chain .extend() directly after action definition
+export const updateGroup = action(async (id: string, input: UpdateGroupInput) => {
+  const groupToUpdateAtom = groupsAtom().find((g) => g().id === id)
+  if (!groupToUpdateAtom) throw new Error('Group not found')
+
+  groupToUpdateAtom.set((current) => ({ ...current, ...input, ...updateTimestamp() }))
+}, 'groups.updateGroup').extend(withAsync())
+
+export const deleteGroup = action(async (groupId: string) => {
+  groupsAtom.set((currentGroups) => currentGroups.filter((g) => g().id !== groupId))
+  bookmarksAtom.set((currentBookmarks) => currentBookmarks.filter((b) => b().groupId !== groupId))
+}, 'groups.deleteGroup').extend(withAsync())
+```
+
+### 9. No React StrictMode or Context Provider
 
 ```tsx
 // main.tsx - Current project setup
@@ -1318,7 +1465,24 @@ createRoot(document.getElementById('root')!).render(
 )
 ```
 
-### 9. Leverage Extensions for Cross-Cutting Concerns
+### 10. Use IndexedDB for Persistent Entity Storage
+
+```typescript
+import { atom, withIndexedDb, type Atom } from '@reatom/core'
+import { StorageKeys } from '@/lib/storage/keys'
+import { userIdAtom } from '@/stores/auth/atoms'
+
+// Persist array of atoms to IndexedDB with user-specific key
+export const bookmarksAtom = atom<Atom<Bookmark>[]>([], 'bookmarks.atom').extend(
+  withIndexedDb({ key: StorageKeys.bookmarks(userIdAtom()!) })
+)
+
+export const groupsAtom = atom<Atom<Group>[]>([], 'groups.groups').extend(
+  withIndexedDb({ key: StorageKeys.groups(userIdAtom()!) })
+)
+```
+
+### 11. Leverage Extensions for Cross-Cutting Concerns
 
 ```typescript
 // Apply logging, persistence, and URL sync declaratively
@@ -1444,4 +1608,22 @@ const resource = computed(async () => {
 resource.ready()  // boolean
 resource.data()   // data or initState
 resource.error()  // Error or undefined
+
+// Array of Atoms (for entity collections)
+const items = atom<Atom<Item>[]>([], 'items')
+
+// Create: wrap in atom
+items.set((prev) => [...prev, atom(newItem)])
+
+// Update: find atom, update directly
+const itemAtom = items().find((i) => i().id === id)
+itemAtom.set((prev) => ({ ...prev, ...updates }))
+
+// Delete: filter array
+items.set((prev) => prev.filter((i) => i().id !== id))
+
+// Async action with extension
+const updateItem = action(async (id, input) => {
+  // ... logic
+}, 'items.update').extend(withAsync())
 ```

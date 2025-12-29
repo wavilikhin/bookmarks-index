@@ -10,9 +10,10 @@ import {
   DropdownMenuSeparator
 } from '@/shared/ui'
 import type { Group } from '@/types'
+import type { Atom } from '@reatom/core'
 
 interface GroupTabsProps {
-  groups: Group[]
+  groups: Atom<Group>[]
   activeGroupId: string | null
   onSelectGroup: (groupId: string) => void
   onAddGroup: () => void
@@ -92,7 +93,7 @@ export function GroupTabs({
       >
         {groups.map((group) => (
           <GroupTab
-            key={group.id}
+            key={group().id}
             group={group}
             isActive={group.id === activeGroupId}
             onSelect={() => onSelectGroup(group.id)}

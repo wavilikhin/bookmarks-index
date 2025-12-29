@@ -1,0 +1,1 @@
+export { getSeedBookmarks } from './getSeedBookmarks'

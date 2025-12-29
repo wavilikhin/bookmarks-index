@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { Trash2 } from 'lucide-react'
 import { reatomComponent, useWrap } from '@reatom/react'
-import { SpacesSidebar } from './spaces-sidebar'
-import { GroupTabs } from './group-tabs'
-import { BookmarkGrid } from './bookmark-grid'
-import { UserMenu } from './user-menu'
-import { AddEditModal } from './add-edit-modal'
-import { EmptyState } from './empty-state'
+import { SpacesSidebar } from './ui/spaces-sidebar'
+import { GroupTabs } from './ui/group-tabs'
+import { BookmarkGrid } from './ui/bookmark-grid'
+import { UserMenu } from './ui/user-menu'
+import { AddEditModal } from './ui/add-edit-modal'
+import { EmptyState } from './ui/empty-state'
 import {
   AlertDialog,
   AlertDialogContent,
@@ -21,15 +21,11 @@ import {
 import type { Space, Group, Bookmark, EntityType } from '@/types'
 
 // Reatom atoms and actions
-import { userAtom } from '@/stores/auth/atoms'
 import { activeSpaceIdAtom, selectedGroupIdAtom } from '@/stores/ui/atoms'
-import { setActiveSpace, setSelectedGroup } from '@/stores/ui/actions'
-
-// Hooks
-import { useSpaces, useSpaceActions } from '@/hooks/use-spaces'
-import { useGroups, useGroupActions } from '@/hooks/use-groups'
-import { useBookmarks, useBookmarkActions } from '@/hooks/use-bookmarks'
-import { useTheme } from '@/hooks/use-theme'
+import { createSpace, updateSpace, deleteSpace, spacesAtom } from '@/domain/spaces'
+import { groupsAtom, createGroup, updateGroup, deleteGroup } from '@/domain/groups'
+import { bookmarksAtom, createBookmark, deleteBookmark, updateBookmark } from '@/domain/bookmarks'
+import { setActiveSpace, setSelectedGroup } from '@/stores'
 
 interface ModalState {
   isOpen: boolean
@@ -53,31 +49,20 @@ interface DeleteState {
  * - Center: Bookmark grid
  *
  * State management uses Reatom stores with IndexedDB persistence.
+ * Authentication is handled by Clerk (wrapped in AuthGuard).
  */
-export const NewTabPage = reatomComponent(() => {
-  // Auth state from atoms
-  const user = userAtom()
-
+export const MainScreen = reatomComponent(() => {
   // UI state from atoms
   const activeSpaceId = activeSpaceIdAtom()
   const selectedGroupId = selectedGroupIdAtom()
 
-  // Theme
-  const { theme, setTheme } = useTheme()
+  const allSpaces = spacesAtom()
+  const allGroups = groupsAtom()
+  const allBookmarks = bookmarksAtom()
 
-  // Data from hooks (which call atoms internally)
-  const spaces = useSpaces()
-  const groups = useGroups(activeSpaceId)
-  const bookmarks = useBookmarks(selectedGroupId)
-
-  // Actions
-  const { createSpace, updateSpace, deleteSpace } = useSpaceActions()
-  const { createGroup, updateGroup, deleteGroup } = useGroupActions()
-  const { createBookmark, updateBookmark, deleteBookmark } = useBookmarkActions()
-
-  // Wrap UI actions for use in callbacks
-  const doSetActiveSpace = useWrap(setActiveSpace)
-  const doSetSelectedGroup = useWrap(setSelectedGroup)
+  // Filter groups and bookmarks based on selection
+  const groups = activeSpaceId ? allGroups.filter((g) => g().spaceId === activeSpaceId) : []
+  const bookmarks = selectedGroupId ? allBookmarks.filter((b) => b().groupId === selectedGroupId) : []
 
   // Modal states
   const [modalState, setModalState] = React.useState<ModalState>({
@@ -90,33 +75,11 @@ export const NewTabPage = reatomComponent(() => {
     entityType: 'space'
   })
 
-  // Set initial active space when spaces load
-  React.useEffect(() => {
-    if (spaces.length > 0 && !activeSpaceId) {
-      doSetActiveSpace(spaces[0].id)
-    }
-  }, [spaces, activeSpaceId, doSetActiveSpace])
+  // 1. Set initial active space when spaces load
 
-  // Set initial selected group when space changes or groups load
-  React.useEffect(() => {
-    if (groups.length > 0 && !selectedGroupId) {
-      doSetSelectedGroup(groups[0].id)
-    } else if (groups.length === 0) {
-      doSetSelectedGroup(null)
-    }
-  }, [groups, selectedGroupId, doSetSelectedGroup])
+  // 2. Set initial selected group when space changes or groups load
 
-  // Reset selected group when space changes
-  React.useEffect(() => {
-    if (activeSpaceId && groups.length > 0) {
-      // Check if current selected group belongs to active space
-      const currentGroup = groups.find((g) => g.id === selectedGroupId)
-      if (!currentGroup) {
-        doSetSelectedGroup(groups[0].id)
-      }
-    }
-  }, [activeSpaceId, groups, selectedGroupId, doSetSelectedGroup])
-
+  // 3. Reset selected group when space changes
   // Modal handlers
   const openCreateModal = (entityType: EntityType) => {
     setModalState({ isOpen: true, mode: 'create', entityType })
@@ -144,28 +107,31 @@ export const NewTabPage = reatomComponent(() => {
       if (modalState.mode === 'create') {
         switch (modalState.entityType) {
           case 'space': {
-            const newSpace = await createSpace({
+            const newSpace = createSpace({
               name: data.name,
               icon: data.icon || '📁',
               color: data.color
             })
-            doSetActiveSpace(newSpace.id)
+            setActiveSpace(newSpace.id)
             break
           }
           case 'group': {
             if (activeSpaceId) {
-              const newGroup = await createGroup({
+              const newGroupId = createGroup({
                 spaceId: activeSpaceId,
                 name: data.name,
                 icon: data.icon
               })
-              doSetSelectedGroup(newGroup.id)
+              setSelectedGroup(newGroupId)
             }
             break
           }
           case 'bookmark':
             if (selectedGroupId) {
-              await createBookmark({
+              if (!activeSpaceId) return
+
+              createBookmark({
+                spaceId: activeSpaceId,
                 groupId: selectedGroupId,
                 title: data.title,
                 url: data.url,
@@ -181,7 +147,7 @@ export const NewTabPage = reatomComponent(() => {
 
         switch (modalState.entityType) {
           case 'space':
-            await updateSpace(entity.id, {
+            updateSpace(entity.id, {
               name: data.name,
               icon: data.icon,
               color: data.color
@@ -215,29 +181,29 @@ export const NewTabPage = reatomComponent(() => {
     try {
       switch (deleteState.entityType) {
         case 'space': {
-          await deleteSpace(entity.id, true)
+          deleteSpace(entity.id)
           // Select another space if available
-          const remainingSpaces = spaces.filter((s) => s.id !== entity.id)
+          const remainingSpaces = allSpaces.filter((s) => s().id !== entity.id)
           if (remainingSpaces.length > 0) {
-            doSetActiveSpace(remainingSpaces[0].id)
+            setActiveSpace(remainingSpaces[0]().id)
           } else {
-            doSetActiveSpace(null)
+            setActiveSpace(null)
           }
           break
         }
         case 'group': {
-          await deleteGroup(entity.id, true)
+          deleteGroup(entity.id)
           // Select another group if available
-          const remainingGroups = groups.filter((g) => g.id !== entity.id)
+          const remainingGroups = groups.filter((g) => g()!.id !== entity.id)
           if (remainingGroups.length > 0) {
-            doSetSelectedGroup(remainingGroups[0].id)
+            setSelectedGroup(remainingGroups[0]().id)
           } else {
-            doSetSelectedGroup(null)
+            setSelectedGroup(null)
           }
           break
         }
         case 'bookmark':
-          await deleteBookmark(entity.id, true)
+          await deleteBookmark(entity.id)
           break
       }
       closeDeleteDialog()
@@ -248,7 +214,7 @@ export const NewTabPage = reatomComponent(() => {
 
   // Determine empty state
   const getEmptyState = () => {
-    if (spaces.length === 0) return 'no-spaces'
+    if (allSpaces.length === 0) return 'no-spaces'
     if (groups.length === 0) return 'no-groups'
     if (bookmarks.length === 0) return 'no-bookmarks'
     return null
@@ -256,15 +222,13 @@ export const NewTabPage = reatomComponent(() => {
 
   const emptyState = getEmptyState()
 
-  if (!user) return null
-
   return (
     <div className="flex h-screen w-full bg-background">
       {/* Left sidebar - Spaces */}
       <SpacesSidebar
-        spaces={spaces}
+        spaces={allSpaces}
         activeSpaceId={activeSpaceId}
-        onSelectSpace={doSetActiveSpace}
+        onSelectSpace={setActiveSpace}
         onAddSpace={() => openCreateModal('space')}
         onEditSpace={(space) => openEditModal('space', space)}
         onDeleteSpace={(space) => openDeleteDialog('space', space)}
@@ -279,7 +243,7 @@ export const NewTabPage = reatomComponent(() => {
               <GroupTabs
                 groups={groups}
                 activeGroupId={selectedGroupId}
-                onSelectGroup={doSetSelectedGroup}
+                onSelectGroup={setSelectedGroup}
                 onAddGroup={() => openCreateModal('group')}
                 onEditGroup={(group) => openEditModal('group', group)}
                 onDeleteGroup={(group) => openDeleteDialog('group', group)}
@@ -289,12 +253,7 @@ export const NewTabPage = reatomComponent(() => {
 
           {/* User menu */}
           <div className="flex items-center gap-2 px-4 py-2">
-            <UserMenu
-              user={user}
-              onSettings={() => console.log('Open settings')}
-              theme={theme}
-              onThemeChange={setTheme}
-            />
+            <UserMenu onSettings={() => console.log('Open settings')} theme={theme} onThemeChange={setTheme} />
           </div>
         </header>
 

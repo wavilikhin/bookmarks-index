@@ -1,308 +1,234 @@
 # Agent Guidelines
 
-## General rules
+## General Rules
 
-- Always keep this file up to date. On any components or architecture updates update this file as well
-
-## UI Framework
-
-This project uses **shadcn/ui** with the **Base-Lyra** style (built on `@base-ui/react` instead of Radix UI).
-
-## Configuration
-
-| Item            | Value                  |
-| --------------- | ---------------------- |
-| Style           | `base-lyra`            |
-| CSS Variables   | Enabled (OKLCH colors) |
-| TypeScript      | Enabled                |
-| Tailwind CSS    | v4                     |
-| Icon Library    | Lucide React           |
-| Package Manager | **bun** (not npm)      |
-
-## Path Aliases
-
-- `@/shared/ui` - All UI components (shadcn base)
-- `@/shared/ui/kit` - shadcn/ui primitives (button, input, etc.)
-- `@/shared/ui/auth` - Authentication components
-- `@/shared/ui/new-tab` - Main application components
-- `@/lib` - Library utilities
-- `@/lib/storage` - IndexedDB storage layer
-- `@/lib/utils` - Entity and validation utilities
-- `@/hooks` - Custom hooks
-- `@/stores` - Reatom state stores
-- `@/types` - TypeScript type definitions
+- Always keep this file up to date on any architecture changes
+- Use **bun** (not npm/yarn) for all commands
 
 ## Commands
 
 ```bash
-# Start dev server (web app mode)
-bun dev
-
-# Build for production
-bun run build
-
-# Build for Chrome extension
-bun run build:extension
-
-# Build with watch mode
-bun run build:watch
-
-# Preview production build
-bun run preview
-
-# Lint
-bun run lint
-
-# Add a new shadcn component
-bunx shadcn@latest add <component>
+bun dev                      # Start dev server (http://localhost:5173)
+bun run build                # Build for production
+bun run build:extension      # Build for Chrome extension
+bun run lint                 # Run ESLint
+bun run lint:fix             # Fix lint errors
+bun run tsc                  # Type check (no emit)
+bun run format               # Format with Prettier
+bunx shadcn@latest add <c>   # Add shadcn component
 ```
 
-## Project Structure
+## Code Style
 
-```
-src/
-├── shared/
-│   └── ui/
-│       ├── auth/
-│       │   ├── auth-guard.tsx      # Auth wrapper, loading states, redirects
-│       │   ├── login-form.tsx      # Username input form
-│       │   └── index.ts            # Auth barrel export
-│       ├── new-tab/
-│       │   ├── index.tsx           # Main layout, orchestrates all components
-│       │   ├── spaces-sidebar.tsx  # Left sidebar with space navigation
-│       │   ├── group-tabs.tsx      # Horizontal tabs for groups
-│       │   ├── bookmark-grid.tsx   # Grid of bookmark items
-│       │   ├── bookmark-item.tsx   # Individual bookmark circle
-│       │   ├── user-menu.tsx       # Avatar dropdown with theme/logout
-│       │   ├── add-edit-modal.tsx  # CRUD modal for entities
-│       │   └── empty-state.tsx     # Empty state messages
-│       ├── kit/                    # shadcn/ui primitives (14 installed)
-│       │   ├── alert-dialog.tsx
-│       │   ├── badge.tsx
-│       │   ├── button.tsx
-│       │   ├── card.tsx
-│       │   ├── combobox.tsx
-│       │   ├── dropdown-menu.tsx
-│       │   ├── field.tsx
-│       │   ├── input.tsx
-│       │   ├── input-group.tsx
-│       │   ├── label.tsx
-│       │   ├── loading-screen.tsx
-│       │   ├── select.tsx
-│       │   ├── separator.tsx
-│       │   ├── textarea.tsx
-│       │   └── index.ts            # Kit barrel export
-│       └── index.ts                # UI barrel export
-├── hooks/
-│   ├── use-spaces.ts           # Space selectors and actions
-│   ├── use-groups.ts           # Group selectors and actions
-│   ├── use-bookmarks.ts        # Bookmark selectors and actions
-│   └── use-theme.ts            # Theme management
-├── lib/
-│   ├── storage/
-│   │   ├── keys.ts             # Storage key constants
-│   │   ├── idb.ts              # IndexedDB wrapper (idb-keyval)
-│   │   └── seed.ts             # Sample data for new users
-│   ├── utils/
-│   │   ├── entity.ts           # ID generation, timestamps
-│   │   └── validators.ts       # Zod schemas
-│   └── utils.ts                # cn() utility
-├── stores/
-│   ├── auth/
-│   │   ├── atoms.ts            # User, isLoading, isInitialized atoms
-│   │   └── actions.ts          # initializeAuth, login, logout actions
-│   ├── data/
-│   │   ├── atoms.ts            # Spaces, Groups, Bookmarks atoms
-│   │   ├── computed.ts         # Derived state (getGroupsBySpaceId, etc.)
-│   │   └── actions.ts          # CRUD actions for all entities
-│   ├── ui/
-│   │   ├── atoms.ts            # activeSpaceId, theme, modal state
-│   │   └── actions.ts          # setActiveSpace, setTheme, modal actions
-│   └── index.ts                # Consolidated re-exports
-├── types/
-│   └── index.ts                # All TypeScript interfaces
-├── App.tsx                     # Root with AuthGuard wrapper
-├── main.tsx                    # React entry point
-└── index.css                   # Tailwind + CSS variables
-```
+### Formatting (Prettier)
 
-## Architecture
+- Print width: 120
+- No semicolons
+- Single quotes
+- No trailing commas
+- Arrow parens: always
 
-### Data Flow
+### Imports
 
-```
-User Action → Hook → Store → IndexedDB
-                ↓
-            UI Update
-```
-
-### State Management (Reatom)
-
-This project uses **Reatom v1000** for state management with atomic state design.
-
-| Module  | Purpose        | Key Exports                                               |
-| ------- | -------------- | --------------------------------------------------------- |
-| `auth/` | Authentication | `userAtom`, `isAuthenticatedAtom`, `login`, `logout`      |
-| `data/` | Entity CRUD    | `spacesAtom`, `groupsAtom`, `bookmarksAtom`, CRUD actions |
-| `ui/`   | UI state       | `activeSpaceIdAtom`, `themeAtom`, `modalTypeAtom`         |
-
-#### Reatom Patterns
+Order imports in this sequence (separated by blank lines):
 
 ```typescript
-// Atoms - reactive state containers
-import { atom, computed, action, wrap } from '@reatom/core'
+// 1. External packages
+import { atom, action } from '@reatom/core'
+import { useWrap } from '@reatom/react'
 
-// Define atoms with initial value and name
-export const userAtom = atom<User | null>(null, 'auth.user')
+// 2. Internal aliases (use @/ always, never relative paths)
+import { spacesAtom } from '@/stores/data/atoms'
+import { generateId } from '@/lib/utils/entity'
+import type { Space, CreateSpaceInput } from '@/types'
 
-// Computed values - derived state
-export const isAuthenticatedAtom = computed(() => userAtom() !== null, 'auth.isAuthenticated')
-
-// Actions - state mutations (sync or async)
-export const login = action(async (username: string) => {
-  // Use wrap() for async operations to preserve context
-  const user = await wrap(getUser(userId))
-  userAtom.set(user)
-}, 'auth.login')
+// 3. Type-only imports use `import type`
+import type { Space } from '@/types'
 ```
 
-#### React Integration
+### Function Signatures
+
+**Rule: Max 2 positional parameters. Use object for 3+.**
+
+Parameter names must be semantically related to the function name:
+
+```typescript
+// GOOD: 2 params with clear names
+function updateSpace(spaceId: string, partialSpace: UpdateSpaceInput) {}
+function getBookmarksByGroup(groupId: string) {}
+function deleteBookmark(bookmarkId: string, hard?: boolean) {}
+
+// GOOD: Options as 3rd param when needed
+function deleteGroup(groupId: string, userId: string, options?: { hard?: boolean }) {}
+
+// BAD: Too many positional params
+function reorderBookmarks(userId: string, groupId: string, orderedIds: string[]) {}
+
+// GOOD: Use object for 3+ params
+function reorderBookmarks(params: { userId: string; groupId: string; orderedIds: string[] }) {}
+
+// BAD: Generic/unclear names
+function update(id: string, data: unknown) {}
+function process(a: string, b: string, c: boolean) {}
+```
+
+### Naming Conventions
+
+| Element     | Convention       | Example                                 |
+| ----------- | ---------------- | --------------------------------------- |
+| Files       | kebab-case       | `auth-guard.tsx`, `bookmark-item.ts`    |
+| Model files | `.model.ts`      | `bookmarks.model.ts`, `groups.model.ts` |
+| Types files | `.types.ts`      | `bookmarks.types.ts`, `group.types.ts`  |
+| Components  | PascalCase       | `BookmarkItem`, `UserMenu`              |
+| Atoms       | camelCase + Atom | `userIdAtom`, `spacesAtom`              |
+| Actions     | camelCase verb   | `createSpace`, `loadUserData`           |
+| Types       | PascalCase       | `Space`, `CreateSpaceInput`             |
+| Constants   | UPPER_SNAKE      | `STORAGE_KEYS`, `MAX_ITEMS`             |
+
+### Types
+
+- Use explicit types for function parameters and return types
+- Use `type` for object shapes, `interface` for extendable contracts
+- Prefer `Pick`/`Omit`/`Partial` over duplicating type fields
+- Use `import type` for type-only imports
+
+```typescript
+// Input types pattern
+export type CreateSpaceInput = Pick<Space, 'name' | 'icon' | 'color'>
+export type UpdateSpaceInput = Partial<Omit<Space, 'id' | 'userId' | 'createdAt'>>
+```
+
+### Error Handling
+
+- Throw descriptive errors for invalid state
+- Use early returns for guard clauses
+- Check authentication before operations
+
+```typescript
+export const createSpace = action(async (input: CreateSpaceInput) => {
+  const userId = userIdAtom()
+  if (!userId) throw new Error('User not authenticated')
+  // ...
+}, 'data.createSpace')
+```
+
+### Reatom Patterns
+
+```typescript
+// Atoms with type and name
+export const userIdAtom = atom<string | null>(null, 'auth.userId')
+
+// Computed values
+export const isAuthenticatedAtom = computed(() => userIdAtom() !== null, 'auth.isAuthenticated')
+
+// Actions with descriptive names
+export const loadUserData = action(async (userId: string) => {
+  userIdAtom.set(userId)
+  await wrap(loadAllData(userId))
+}, 'auth.loadUserData')
+  // Extend async actions
+  .extend(withAsync())
+```
+
+### React Components
 
 ```typescript
 // Use reatomComponent for reactive components
-import { reatomComponent } from "@reatom/react"
-import { userAtom, isLoadingAtom } from "@/stores"
-
 export const MyComponent = reatomComponent(() => {
-  // Call atoms directly inside reatomComponent - they auto-subscribe
-  const user = userAtom()
-  const isLoading = isLoadingAtom()
+  const userId = userIdAtom()           // Auto-subscribes
+  const handleClick = () => someAction() // Call actions directly
+  return <div>{userId}</div>
+}, 'MyComponent')
 
-  // Call actions directly
-  const handleLogin = () => login("username")
-
-  return <div>{user?.username}</div>
-}, "MyComponent")
+// Use useWrap for actions in event handlers
+const wrappedAction = useWrap(someAction)
 ```
 
-#### Setup in main.tsx
+## Domain Structure
 
-> **Note**: This project uses a simplified setup without React StrictMode or explicit context provider.
+Each domain entity lives in `src/domain/<entity>/` with a strict file structure:
+
+```
+src/domain/<entity>/
+├── <entity>.model.ts    # Atoms + Actions (all state & logic)
+├── <entity>.types.ts    # Types + Input types
+├── lib/                 # Helper functions (seed data, utils)
+│   ├── getSeed<Entity>.ts
+│   └── index.ts         # Barrel export
+└── index.ts             # Consolidated public exports
+```
+
+### Rules
+
+1. **Unique file names** - Use `.model.ts` and `.types.ts` suffixes for easy file search
+2. **Single model file** - All atoms and actions for a domain go in one `.model.ts` file
+3. **Types separate** - Keep types in `.types.ts`, import with `import type`
+4. **Lib folder** - Helper functions (seed generators, validators) go in `/lib`
+5. **Barrel exports** - Each folder has `index.ts` that re-exports public API
+6. **No React hooks for atoms** - Use atoms directly in `reatomComponent()`, don't create wrapper hooks
+
+### Example: Bookmarks Domain
 
 ```typescript
-// main.tsx - Minimal setup
-import { createRoot } from "react-dom/client"
-import App from "./App.tsx"
+// bookmarks.types.ts
+export interface Bookmark extends BaseEntity { ... }
+export type CreateBookmarkInput = Pick<Bookmark, 'spaceId' | 'groupId' | 'title' | 'url'>
 
-// No StrictMode - it causes double-effects that break Reatom context
-// No reatomContext.Provider - Reatom's default context works with reatomComponent
-createRoot(document.getElementById("root")!).render(<App />)
+// bookmarks.model.ts
+export const bookmarksAtom = atom<Atom<Bookmark>[]>([], 'bookmarks.atom')
+export const createBookmark = action((input: CreateBookmarkInput) => { ... }, 'bookmarks.create')
+
+// index.ts
+export type { Bookmark, CreateBookmarkInput } from './bookmarks.types'
+export { bookmarksAtom, createBookmark } from './bookmarks.model'
+export { getSeedBookmarks } from './lib'
 ```
 
-**Why no StrictMode?** React StrictMode double-invokes effects in development, which breaks Reatom's context tracking.
+## Path Aliases
 
-**Why no Provider?** The explicit `reatomContext.Provider` was causing initialization issues. Reatom's default global context works reliably with `reatomComponent`.
+| Alias             | Path              |
+| ----------------- | ----------------- |
+| `@/domain`        | Domain modules    |
+| `@/shared/ui`     | UI components     |
+| `@/shared/ui/kit` | shadcn primitives |
+| `@/lib`           | Utilities         |
+| `@/lib/storage`   | IndexedDB layer   |
+| `@/stores`        | Reatom stores     |
+| `@/types`         | TypeScript types  |
 
-### Storage Layer (IndexedDB)
+## Tech Stack
 
-- Uses `idb-keyval` with custom store `bookmarks-index-db`
-- Keys follow pattern: `bookmarks:{entity}:{userId}`
-- All data is user-scoped for multi-user support
+| Item         | Value                  |
+| ------------ | ---------------------- |
+| UI Framework | shadcn/ui (Base-Lyra)  |
+| State        | Reatom v1000           |
+| Auth         | Clerk                  |
+| Storage      | IndexedDB (idb-keyval) |
+| Styling      | Tailwind CSS v4        |
+| Icons        | Lucide React           |
 
-### Entity Structure
+## Entity IDs
 
-```
-User (user_xxx)
-└── Spaces (space_xxx)
-    └── Groups (group_xxx)
-        └── Bookmarks (bookmark_xxx)
-```
-
-| Field                 | Description                            |
-| --------------------- | -------------------------------------- |
-| `id`                  | Prefixed nanoid (e.g., `space_abc123`) |
-| `userId`              | Owner reference (denormalized)         |
-| `isArchived`          | Soft delete flag                       |
-| `createdAt/updatedAt` | ISO 8601 timestamps                    |
-
-### Hooks API
+Use prefixed nanoid: `space_abc123`, `group_xyz789`, `bookmark_def456`
 
 ```typescript
-// Spaces
-const spaces = useSpaces()
-const activeSpace = useActiveSpace()
-const { createSpace, updateSpace, deleteSpace } = useSpaceActions()
-
-// Groups
-const groups = useGroups(spaceId)
-const selectedGroup = useSelectedGroup()
-const { createGroup, updateGroup, deleteGroup } = useGroupActions()
-
-// Bookmarks
-const bookmarks = useBookmarks(groupId)
-const { createBookmark, updateBookmark, deleteBookmark } = useBookmarkActions()
-
-// Theme
-const { theme, setTheme } = useTheme()
+import { generateId } from '@/lib/utils/entity'
+const id = generateId('space') // "space_x7k2m9p4"
 ```
-
-## Installed shadcn/ui Components
-
-- `alert-dialog` - Confirmation dialogs
-- `badge` - Status badges
-- `button` - Buttons with variants
-- `card` - Card containers
-- `combobox` - Searchable select
-- `dropdown-menu` - Context menus
-- `field` - Form field wrapper
-- `input` - Text inputs
-- `input-group` - Input with addons
-- `label` - Form labels
-- `select` - Native select
-- `separator` - Visual dividers
-- `textarea` - Multi-line input
 
 ## Best Practices
 
-1. **Always use bun** - Not npm or yarn
-2. **Use shadcn CLI** - `bunx shadcn@latest add <component>`
-3. **Use path aliases** - `@/shared/ui` not relative paths
-4. **Use hooks** - Don't access stores directly in components
-5. **Use cn()** - For conditional Tailwind classes
-6. **Follow Base-Lyra patterns** - `render` prop for composition
-
-## Extension vs Web App
-
-Both modes use identical code:
-
-- **Web App**: `bun dev` → http://localhost:5173
-- **Extension**: `bun run build:extension` → load `dist/` in Chrome
-
-IndexedDB works in both contexts, data persists across sessions.
-
----
+1. **Use path aliases** - `@/stores` not `../../stores`
+2. **Use cn()** - For conditional Tailwind classes
+3. **Use reatomComponent** - For reactive components
+4. **Soft delete** - Use `isArchived` flag, not hard delete by default
 
 ## MCP: Worklog
 
-Use worklog MCP tools for persistent context across sessions.
+Use worklog MCP tools for session continuity:
 
-### Auto-Use (No Permission Needed)
-
-1. **Session start** → `worklog:summary`
-2. **New feature** → `feature:set` with name + description
-3. **Create plan** → `plan:set` with steps array
-4. **Complete step** → `plan:annotate` with status "completed"
-5. **Important decision** → `log:add` type:"decision"
-6. **Discovery** → `log:add` type:"discovery"
-
-### Pattern
-
-```
-[Start] worklog:summary → load context
-[New feature] feature:set → track it
-[Plan created] plan:set → save steps
-[Work] plan:annotate → update status
-[Decisions] log:add → record rationale
-```
-
-**Goal**: Seamless session continuity - users feel you "remember everything".
+1. **Session start** - `worklog:summary`
+2. **New feature** - `feature:set` with name + description
+3. **Planning** - `plan:set` with steps array
+4. **Progress** - `plan:annotate` with status
+5. **Decisions** - `log:add` type:"decision"

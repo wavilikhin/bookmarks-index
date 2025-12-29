@@ -10,9 +10,10 @@ import {
   DropdownMenuSeparator
 } from '@/shared/ui'
 import type { Space } from '@/types'
+import type { Atom } from '@reatom/core'
 
 interface SpacesSidebarProps {
-  spaces: Space[]
+  spaces: Atom<Space>[]
   activeSpaceId: string | null
   onSelectSpace: (spaceId: string) => void
   onAddSpace: () => void
