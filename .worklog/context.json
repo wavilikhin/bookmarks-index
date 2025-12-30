@@ -39,6 +39,30 @@
       "status": "completed",
       "createdAt": "2025-12-26T14:23:59.652Z",
       "updatedAt": "2025-12-26T14:39:20.511Z"
+    },
+    {
+      "id": "mjsarud7x8qmxgpuhkg",
+      "name": "Supabase Backend Migration",
+      "description": "Migrate from IndexedDB to Supabase with tRPC server for authenticated data persistence",
+      "status": "active",
+      "createdAt": "2025-12-30T08:00:22.651Z",
+      "updatedAt": "2025-12-30T08:00:22.654Z"
+    },
+    {
+      "id": "mjsasp59jy71il89hoi",
+      "name": "Supabase Backend Migration Architecture",
+      "description": "Design backend architecture for migrating Chrome extension from IndexedDB to Supabase with tRPC server, Drizzle ORM, and Clerk auth verification",
+      "status": "active",
+      "createdAt": "2025-12-30T08:01:02.541Z",
+      "updatedAt": "2025-12-30T08:01:02.541Z"
+    },
+    {
+      "id": "mjsbt4xlkhhk3ioyux",
+      "name": "Supabase Backend Migration - Phase 1",
+      "description": "Server Foundation: Initialize server package with Hono, tRPC, Drizzle ORM, and Clerk JWT verification",
+      "status": "completed",
+      "createdAt": "2025-12-30T08:29:22.617Z",
+      "updatedAt": "2025-12-30T08:32:25.536Z"
     }
   ],
   "plans": [
@@ -346,6 +370,154 @@
       "status": "active",
       "createdAt": "2025-12-26T14:30:20.738Z",
       "updatedAt": "2025-12-26T14:39:37.586Z"
+    },
+    {
+      "id": "mjsasqw6fccut0hndla",
+      "featureId": "mjsasp59jy71il89hoi",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Analyze current codebase structure and entity types",
+          "status": "completed",
+          "meta": "Analyzed: Space, Group, Bookmark entities with userId denormalization, soft delete via isArchived, order field for sorting, prefixed nanoid IDs"
+        },
+        {
+          "id": "step-1",
+          "description": "Design monorepo structure with /server folder",
+          "status": "pending"
+        },
+        {
+          "id": "step-2",
+          "description": "Design Drizzle schema for PostgreSQL",
+          "status": "pending"
+        },
+        {
+          "id": "step-3",
+          "description": "Design tRPC router structure",
+          "status": "pending"
+        },
+        {
+          "id": "step-4",
+          "description": "Design Clerk JWT verification middleware",
+          "status": "pending"
+        },
+        {
+          "id": "step-5",
+          "description": "Design client integration pattern",
+          "status": "pending"
+        },
+        {
+          "id": "step-6",
+          "description": "Design migration strategy from IndexedDB",
+          "status": "pending"
+        },
+        {
+          "id": "step-7",
+          "description": "Design offline/error handling strategy",
+          "status": "pending"
+        },
+        {
+          "id": "step-8",
+          "description": "Document complete architecture blueprint",
+          "status": "pending"
+        }
+      ],
+      "status": "archived",
+      "createdAt": "2025-12-30T08:01:04.806Z",
+      "updatedAt": "2025-12-30T08:01:09.990Z"
+    },
+    {
+      "id": "mjsb4abypflwfpmt9qq",
+      "featureId": "mjsasp59jy71il89hoi",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Explore current codebase structure",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Design architecture with Hono + tRPC + Drizzle",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Create implementation plan markdown file",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Review plan with user",
+          "status": "pending"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T08:10:03.214Z",
+      "updatedAt": "2025-12-30T08:15:41.966Z"
+    },
+    {
+      "id": "mjsbt659z3qywhqdjo7",
+      "featureId": "mjsbt4xlkhhk3ioyux",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Create server/ folder structure",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Initialize server/package.json with dependencies",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Create server/tsconfig.json",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Create Drizzle schema files (users, spaces, groups, bookmarks)",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Create schema barrel export and relations",
+          "status": "completed"
+        },
+        {
+          "id": "step-5",
+          "description": "Create drizzle.config.ts",
+          "status": "completed"
+        },
+        {
+          "id": "step-6",
+          "description": "Create database client (db/client.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-7",
+          "description": "Create Clerk auth verification (lib/auth.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-8",
+          "description": "Create tRPC initialization (trpc.ts, context.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-9",
+          "description": "Create Hono server entry point (index.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-10",
+          "description": "Verify server starts correctly",
+          "status": "completed"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T08:29:24.189Z",
+      "updatedAt": "2025-12-30T08:32:06.923Z"
     }
   ],
   "logs": [
@@ -439,6 +611,20 @@
       "type": "note",
       "content": "Clerk Authentication Integration complete. Files changed: main.tsx, App.tsx, stores/auth/*, shared/ui/auth/*, shared/ui/new-tab/user-menu.tsx, all hooks. Deleted login-form.tsx. Build passes. User needs to: 1) Create Clerk account, 2) Get publishable key, 3) Update .env.local, 4) Configure allowedRedirectOrigins for Chrome extension.",
       "timestamp": "2025-12-26T14:39:39.167Z"
+    },
+    {
+      "id": "mjsbbkv8be9lszzkbpj",
+      "featureId": "mjsasp59jy71il89hoi",
+      "type": "decision",
+      "content": "Implementation plan created for Supabase backend migration. Stack: Hono + tRPC + Drizzle. Decisions: CORS restricted to extension ID, rate limiting deferred, toast notifications for errors (Stage 2), user-prompted migration conflict resolution.",
+      "timestamp": "2025-12-30T08:15:43.460Z"
+    },
+    {
+      "id": "mjsbwr2b1050b8xxpwt",
+      "featureId": "mjsbt4xlkhhk3ioyux",
+      "type": "decision",
+      "content": "Phase 1 Server Foundation complete. Created: Hono server with tRPC, Drizzle schema for users/spaces/groups/bookmarks, Clerk JWT verification, and database client. Server starts and responds to health checks.",
+      "timestamp": "2025-12-30T08:32:11.267Z"
     }
   ],
   "notes": [
@@ -466,5 +652,5 @@
       "createdAt": "2025-12-25T15:50:43.874Z"
     }
   ],
-  "activeFeatureId": "mjmyprqc9xggo4yp1dv"
+  "activeFeatureId": "mjsbt4xlkhhk3ioyux"
 }
