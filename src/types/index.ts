@@ -21,51 +21,17 @@ export interface User extends BaseEntity {
   settings: UserSettings
 }
 
-// Space entity
-export interface Space extends BaseEntity {
-  userId: string
-  name: string
-  icon: string // Emoji (e.g., "💼")
-  color?: string // Optional accent color
-  order: number
-  isArchived: boolean
-}
+// Re-export Space types from domain
+export type { Space, CreateSpaceInput, UpdateSpaceInput } from '@/domain/spaces'
 
-// Group entity
-export interface Group extends BaseEntity {
-  userId: string // Denormalized for queries
-  spaceId: string
-  name: string
-  icon?: string
-  order: number
-  isArchived: boolean
-}
-
-// Bookmark entity
-export interface Bookmark extends BaseEntity {
-  userId: string // Denormalized
-  spaceId: string // Denormalized
-  groupId: string
-  title: string
-  url: string
-  faviconUrl?: string
-  description?: string
-  order: number
-  isPinned: boolean
-  isArchived: boolean
-}
-
-// Input types for CRUD operations
-export type CreateSpaceInput = Pick<Space, 'name' | 'icon' | 'color'>
-export type CreateGroupInput = Pick<Group, 'spaceId' | 'name' | 'icon'>
-export type CreateBookmarkInput = Pick<Bookmark, 'groupId' | 'title' | 'url' | 'description'>
-
-export type UpdateSpaceInput = Partial<Omit<Space, 'id' | 'userId' | 'createdAt'>>
-export type UpdateGroupInput = Partial<Omit<Group, 'id' | 'userId' | 'createdAt'>>
-export type UpdateBookmarkInput = Partial<Omit<Bookmark, 'id' | 'userId' | 'createdAt'>>
+// Re-export Group types from domain
+export type { Group, CreateGroupInput, UpdateGroupInput } from '@/domain/groups'
 
 // UI state types
 export type EntityType = 'space' | 'group' | 'bookmark'
+
+// Re-export Bookmark types from domain
+export type { Bookmark, CreateBookmarkInput, UpdateBookmarkInput } from '@/domain/bookmarks'
 
 export type ModalType =
   | 'createSpace'
@@ -80,5 +46,5 @@ export type ModalType =
 
 export interface ModalState {
   type: ModalType
-  entity?: Space | Group | Bookmark
+  entity?: import('@/domain/spaces').Space | import('@/domain/groups').Group | import('@/domain/bookmarks').Bookmark
 }

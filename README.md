@@ -5,7 +5,6 @@ A browser extension that replaces the new tab page with an elegant, hierarchical
 ## Features
 
 - **Hierarchical organization**: User → Spaces → Groups → Bookmarks
-- **Fake authentication**: Username-based, data stored locally in IndexedDB
 - **Theme support**: Light, dark, and system preference
 - **Sample data**: First-time users get pre-populated bookmarks
 - **Full CRUD**: Create, edit, and delete spaces, groups, and bookmarks
@@ -15,7 +14,6 @@ A browser extension that replaces the new tab page with an elegant, hierarchical
 - React 19 + TypeScript
 - Vite 7
 - Tailwind CSS v4 + shadcn/ui (Base-Lyra)
-- Zustand (state management)
 - IndexedDB via idb-keyval (storage)
 - nanoid (ID generation)
 - Zod (validation)

@@ -31,6 +31,70 @@
       "status": "completed",
       "createdAt": "2025-12-25T15:50:24.791Z",
       "updatedAt": "2025-12-25T16:07:56.827Z"
+    },
+    {
+      "id": "mjmyprqc9xggo4yp1dv",
+      "name": "Clerk Authentication Integration",
+      "description": "Replace local username-based auth with production-ready Clerk authentication, while preserving existing data layer and user data isolation",
+      "status": "completed",
+      "createdAt": "2025-12-26T14:23:59.652Z",
+      "updatedAt": "2025-12-26T14:39:20.511Z"
+    },
+    {
+      "id": "mjsarud7x8qmxgpuhkg",
+      "name": "Supabase Backend Migration",
+      "description": "Migrate from IndexedDB to Supabase with tRPC server for authenticated data persistence",
+      "status": "active",
+      "createdAt": "2025-12-30T08:00:22.651Z",
+      "updatedAt": "2025-12-30T08:00:22.654Z"
+    },
+    {
+      "id": "mjsasp59jy71il89hoi",
+      "name": "Supabase Backend Migration Architecture",
+      "description": "Design backend architecture for migrating Chrome extension from IndexedDB to Supabase with tRPC server, Drizzle ORM, and Clerk auth verification",
+      "status": "active",
+      "createdAt": "2025-12-30T08:01:02.541Z",
+      "updatedAt": "2025-12-30T08:01:02.541Z"
+    },
+    {
+      "id": "mjsbt4xlkhhk3ioyux",
+      "name": "Supabase Backend Migration - Phase 1",
+      "description": "Server Foundation: Initialize server package with Hono, tRPC, Drizzle ORM, and Clerk JWT verification",
+      "status": "completed",
+      "createdAt": "2025-12-30T08:29:22.617Z",
+      "updatedAt": "2025-12-30T08:32:25.536Z"
+    },
+    {
+      "id": "mjsc5w3lycw4lxlmtx",
+      "name": "Phase 2: tRPC Routers",
+      "description": "Implement tRPC routers for spaces, groups, bookmarks, and sync operations",
+      "status": "completed",
+      "createdAt": "2025-12-30T08:39:17.697Z",
+      "updatedAt": "2025-12-30T08:42:03.489Z"
+    },
+    {
+      "id": "mjscjugmvj22hu8dg3c",
+      "name": "Phase 3: Client Integration",
+      "description": "Integrate tRPC client into the Chrome extension frontend to connect with the backend server",
+      "status": "active",
+      "createdAt": "2025-12-30T08:50:08.758Z",
+      "updatedAt": "2025-12-30T08:50:08.758Z"
+    },
+    {
+      "id": "mjsczz3znbaje08s3vj",
+      "name": "Phase 4: Migration & Sync",
+      "description": "Create migration service for local IndexedDB to server migration, including migration dialog and integration into auth flow",
+      "status": "completed",
+      "createdAt": "2025-12-30T09:02:41.279Z",
+      "updatedAt": "2025-12-30T09:11:27.962Z"
+    },
+    {
+      "id": "mjsp8bmod2dj29p63qc",
+      "name": "Coolify + Supabase Deployment Pipeline",
+      "description": "Design and implement CI/CD pipeline with GitHub Actions → GHCR → Coolify, with internal Docker network access to Supabase PostgreSQL",
+      "status": "completed",
+      "createdAt": "2025-12-30T14:45:06.144Z",
+      "updatedAt": "2025-12-30T14:55:57.131Z"
     }
   ],
   "plans": [
@@ -258,6 +322,393 @@
       "status": "active",
       "createdAt": "2025-12-25T15:58:15.096Z",
       "updatedAt": "2025-12-25T16:07:55.715Z"
+    },
+    {
+      "id": "mjmyxxs2pii4o5rcyyl",
+      "featureId": "mjmyprqc9xggo4yp1dv",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Phase 4: Design 3 architectural approaches for Clerk integration",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Present approaches and get user approval",
+          "status": "completed",
+          "meta": "User approved Approach 3: Pragmatic Balance"
+        },
+        {
+          "id": "step-2",
+          "description": "Phase 5: Install @clerk/clerk-react package",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Phase 5: Create .env.local with placeholder for VITE_CLERK_PUBLISHABLE_KEY",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Phase 5: Update main.tsx with ClerkProvider wrapper",
+          "status": "completed"
+        },
+        {
+          "id": "step-5",
+          "description": "Phase 5: Create Clerk auth bridge - sync Clerk user to app state",
+          "status": "completed"
+        },
+        {
+          "id": "step-6",
+          "description": "Phase 5: Update auth atoms to work with Clerk user data",
+          "status": "completed"
+        },
+        {
+          "id": "step-7",
+          "description": "Phase 5: Replace AuthGuard with Clerk SignedIn/SignedOut components",
+          "status": "completed"
+        },
+        {
+          "id": "step-8",
+          "description": "Phase 5: Update UserMenu to use Clerk UserButton for avatar/logout",
+          "status": "completed"
+        },
+        {
+          "id": "step-9",
+          "description": "Phase 5: Update hooks (use-spaces, use-groups, use-bookmarks) to get userId from Clerk",
+          "status": "completed"
+        },
+        {
+          "id": "step-10",
+          "description": "Phase 5: Remove old login-form.tsx and simplify auth actions",
+          "status": "completed"
+        },
+        {
+          "id": "step-11",
+          "description": "Phase 5: Update AGENTS.md with Clerk integration details",
+          "status": "completed"
+        },
+        {
+          "id": "step-12",
+          "description": "Phase 6: Code review",
+          "status": "completed"
+        },
+        {
+          "id": "step-13",
+          "description": "Phase 7: Summary and documentation",
+          "status": "completed"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-26T14:30:20.738Z",
+      "updatedAt": "2025-12-26T14:39:37.586Z"
+    },
+    {
+      "id": "mjsasqw6fccut0hndla",
+      "featureId": "mjsasp59jy71il89hoi",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Analyze current codebase structure and entity types",
+          "status": "completed",
+          "meta": "Analyzed: Space, Group, Bookmark entities with userId denormalization, soft delete via isArchived, order field for sorting, prefixed nanoid IDs"
+        },
+        {
+          "id": "step-1",
+          "description": "Design monorepo structure with /server folder",
+          "status": "pending"
+        },
+        {
+          "id": "step-2",
+          "description": "Design Drizzle schema for PostgreSQL",
+          "status": "pending"
+        },
+        {
+          "id": "step-3",
+          "description": "Design tRPC router structure",
+          "status": "pending"
+        },
+        {
+          "id": "step-4",
+          "description": "Design Clerk JWT verification middleware",
+          "status": "pending"
+        },
+        {
+          "id": "step-5",
+          "description": "Design client integration pattern",
+          "status": "pending"
+        },
+        {
+          "id": "step-6",
+          "description": "Design migration strategy from IndexedDB",
+          "status": "pending"
+        },
+        {
+          "id": "step-7",
+          "description": "Design offline/error handling strategy",
+          "status": "pending"
+        },
+        {
+          "id": "step-8",
+          "description": "Document complete architecture blueprint",
+          "status": "pending"
+        }
+      ],
+      "status": "archived",
+      "createdAt": "2025-12-30T08:01:04.806Z",
+      "updatedAt": "2025-12-30T08:01:09.990Z"
+    },
+    {
+      "id": "mjsb4abypflwfpmt9qq",
+      "featureId": "mjsasp59jy71il89hoi",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Explore current codebase structure",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Design architecture with Hono + tRPC + Drizzle",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Create implementation plan markdown file",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Review plan with user",
+          "status": "pending"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T08:10:03.214Z",
+      "updatedAt": "2025-12-30T08:15:41.966Z"
+    },
+    {
+      "id": "mjsbt659z3qywhqdjo7",
+      "featureId": "mjsbt4xlkhhk3ioyux",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Create server/ folder structure",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Initialize server/package.json with dependencies",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Create server/tsconfig.json",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Create Drizzle schema files (users, spaces, groups, bookmarks)",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Create schema barrel export and relations",
+          "status": "completed"
+        },
+        {
+          "id": "step-5",
+          "description": "Create drizzle.config.ts",
+          "status": "completed"
+        },
+        {
+          "id": "step-6",
+          "description": "Create database client (db/client.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-7",
+          "description": "Create Clerk auth verification (lib/auth.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-8",
+          "description": "Create tRPC initialization (trpc.ts, context.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-9",
+          "description": "Create Hono server entry point (index.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-10",
+          "description": "Verify server starts correctly",
+          "status": "completed"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T08:29:24.189Z",
+      "updatedAt": "2025-12-30T08:32:06.923Z"
+    },
+    {
+      "id": "mjsc65mtnyz2wjd0ow",
+      "featureId": "mjsc5w3lycw4lxlmtx",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Create spaces router with list, create, update, delete, reorder procedures",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Create groups router with list, bySpace, create, update, delete, reorder procedures",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Create bookmarks router with list, byGroup, bySpace, create, update, delete, reorder, bulkCreate procedures",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Create sync router with pull, push, status procedures",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Update root appRouter to combine all routers and export types",
+          "status": "completed"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T08:39:30.053Z",
+      "updatedAt": "2025-12-30T08:41:46.896Z"
+    },
+    {
+      "id": "mjscjv8cmd7cpqkal2i",
+      "featureId": "mjscjugmvj22hu8dg3c",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Add tRPC client dependencies to root package.json",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Create src/api/client.ts with tRPC client setup",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Update src/domain/spaces/spaces.model.ts with server sync",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Update src/domain/groups/groups.model.ts with server sync",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Update src/domain/bookmarks/bookmarks.model.ts with server sync",
+          "status": "completed"
+        },
+        {
+          "id": "step-5",
+          "description": "Add data loading action on auth completion",
+          "status": "completed"
+        },
+        {
+          "id": "step-6",
+          "description": "Add environment variable for API URL",
+          "status": "completed",
+          "meta": "All Phase 3 tasks completed. Fixed export issue in src/app/auth/index.ts. TypeScript and lint pass."
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T08:50:09.756Z",
+      "updatedAt": "2025-12-30T09:02:36.869Z"
+    },
+    {
+      "id": "mjsd54b99g1bxqbsxzo",
+      "featureId": "mjsczz3znbaje08s3vj",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Create migration service (src/lib/storage/migration.ts)",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Create migration atoms for state management (src/stores/migration/)",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Create migration dialog component",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Integrate migration check into auth flow (clerk-user-sync.tsx)",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Remove/update seed data creation logic",
+          "status": "completed",
+          "meta": "Seed data files kept for testing purposes but no longer used in auth flow - data now loads from server"
+        },
+        {
+          "id": "step-5",
+          "description": "Test and verify migration flow",
+          "status": "completed",
+          "meta": "TypeScript and ESLint checks pass"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T09:06:41.301Z",
+      "updatedAt": "2025-12-30T09:11:26.718Z"
+    },
+    {
+      "id": "mjspgdyu0xdj22fvr25",
+      "featureId": "mjsp8bmod2dj29p63qc",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Write comprehensive devops-plan.md with all implementation details",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Update Dockerfile with security hardening (non-root user, proper healthcheck)",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Create GitHub Actions workflow for CI/CD pipeline",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Create database role SQL scripts for least-privilege access",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Update server code for migrations on startup",
+          "status": "completed"
+        },
+        {
+          "id": "step-5",
+          "description": "Create verification checklist and rollback procedures",
+          "status": "completed"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T14:51:22.422Z",
+      "updatedAt": "2025-12-30T14:55:52.214Z"
     }
   ],
   "logs": [
@@ -330,6 +781,83 @@
       "type": "note",
       "content": "Migration complete! All 7 phases finished. Zustand replaced with Reatom v1000. All builds pass (web app and extension). Lint errors are pre-existing shadcn/ui issues unrelated to migration.",
       "timestamp": "2025-12-25T16:08:00.992Z"
+    },
+    {
+      "id": "mjmyv1dan4vpo58t99",
+      "featureId": "mjmyprqc9xggo4yp1dv",
+      "type": "decision",
+      "content": "Clerk Integration Decisions:\n1. User ID: Use Clerk's user ID directly (no migration of old username-based data)\n2. Auth Flow: Both SignInButton and SignUpButton (standard flow)\n3. User Data: Use Clerk's user object directly, no IndexedDB storage for user data\n4. Platform: Chrome extension only\n5. Environment: User will set up Clerk account manually",
+      "timestamp": "2025-12-26T14:28:05.422Z"
+    },
+    {
+      "id": "mjmz0rp7hrcm1kppngf",
+      "featureId": "mjmyprqc9xggo4yp1dv",
+      "type": "decision",
+      "content": "Selected Approach 3 (Pragmatic Balance) for Clerk integration:\n- ClerkProvider at root\n- SignedIn/SignedOut for auth UI\n- ClerkUserSync component syncs userId to userIdAtom\n- Hooks use userIdAtom() for data operations\n- UserMenu uses Clerk's UserButton",
+      "timestamp": "2025-12-26T14:32:32.827Z"
+    },
+    {
+      "id": "mjmz9wnzd8apxn6t1ub",
+      "featureId": "mjmyprqc9xggo4yp1dv",
+      "type": "note",
+      "content": "Clerk Authentication Integration complete. Files changed: main.tsx, App.tsx, stores/auth/*, shared/ui/auth/*, shared/ui/new-tab/user-menu.tsx, all hooks. Deleted login-form.tsx. Build passes. User needs to: 1) Create Clerk account, 2) Get publishable key, 3) Update .env.local, 4) Configure allowedRedirectOrigins for Chrome extension.",
+      "timestamp": "2025-12-26T14:39:39.167Z"
+    },
+    {
+      "id": "mjsbbkv8be9lszzkbpj",
+      "featureId": "mjsasp59jy71il89hoi",
+      "type": "decision",
+      "content": "Implementation plan created for Supabase backend migration. Stack: Hono + tRPC + Drizzle. Decisions: CORS restricted to extension ID, rate limiting deferred, toast notifications for errors (Stage 2), user-prompted migration conflict resolution.",
+      "timestamp": "2025-12-30T08:15:43.460Z"
+    },
+    {
+      "id": "mjsbwr2b1050b8xxpwt",
+      "featureId": "mjsbt4xlkhhk3ioyux",
+      "type": "decision",
+      "content": "Phase 1 Server Foundation complete. Created: Hono server with tRPC, Drizzle schema for users/spaces/groups/bookmarks, Clerk JWT verification, and database client. Server starts and responds to health checks.",
+      "timestamp": "2025-12-30T08:32:11.267Z"
+    },
+    {
+      "id": "mjsc9i3ti3m3gfar1vp",
+      "featureId": "mjsc5w3lycw4lxlmtx",
+      "type": "decision",
+      "content": "Phase 2 tRPC Routers implemented with all CRUD operations: spaces (list, getById, create, update, delete, reorder), groups (list, bySpace, getById, create, update, delete, reorder), bookmarks (list, byGroup, bySpace, getById, create, update, delete, bulkCreate, reorder, move), sync (pull, push, status, ensureUser). All routers use protectedProcedure for auth enforcement.",
+      "timestamp": "2025-12-30T08:42:06.185Z"
+    },
+    {
+      "id": "mjsce378ve5odj0arva",
+      "featureId": "mjsc5w3lycw4lxlmtx",
+      "type": "change",
+      "content": "Addressed code review findings: Added NOT_FOUND error handling to update/move mutations in all routers, replaced raw SQL count with drizzle count() helper for type safety.",
+      "timestamp": "2025-12-30T08:45:40.148Z"
+    },
+    {
+      "id": "mjsdbdtvwgafx81qlnk",
+      "featureId": "mjsczz3znbaje08s3vj",
+      "type": "decision",
+      "content": "Completed Phase 4: Migration & Sync implementation including migration service, state management atoms, migration dialog component, and auth flow integration",
+      "timestamp": "2025-12-30T09:11:33.572Z"
+    },
+    {
+      "id": "mjspgah002r165s2jt8v",
+      "featureId": "mjsp8bmod2dj29p63qc",
+      "type": "discovery",
+      "content": "Gathered deployment requirements: Domain bookmarksapi.web-orc.com, auto-deploy on main, migrations on startup, Chrome extension only CORS, private GHCR repo wavilikhin/bookmarks-index. Supabase network: lowoco8g0ow8okosoooogk4o, DB container: supabase-db-lowoco8g0ow8okosoooogk4o",
+      "timestamp": "2025-12-30T14:51:17.892Z"
+    },
+    {
+      "id": "mjspmamf1cw3a0ltk2",
+      "featureId": "mjsp8bmod2dj29p63qc",
+      "type": "decision",
+      "content": "Completed DevOps implementation: Dockerfile hardening, GitHub Actions CI/CD workflow, DB role SQL scripts, migration-on-startup support, comprehensive devops-plan.md documentation",
+      "timestamp": "2025-12-30T14:55:58.023Z"
+    },
+    {
+      "id": "mjspp95h13b9gzdx1hma",
+      "featureId": "mjsp8bmod2dj29p63qc",
+      "type": "decision",
+      "content": "Migration strategy change: Cannot run migrations locally since Postgres is internal-only. Will use RUN_MIGRATIONS=true on first deploy, or run migrations via docker exec on VPS after deployment.",
+      "timestamp": "2025-12-30T14:58:16.085Z"
     }
   ],
   "notes": [
@@ -337,16 +865,25 @@
       "id": "mjlljzrkg4hl5xnr1z",
       "featureId": "mjlfzdwy813mhux244e",
       "content": "Project structure after full implementation:\n\n**Stores (src/stores/):**\n- auth-store.ts: user, isAuthenticated, isLoading, initialize(), login(), logout()\n- data-store.ts: spaces[], groups[], bookmarks[], CRUD for all entities\n- ui-store.ts: activeSpaceId, selectedGroupId, theme, modal state\n\n**Storage (src/lib/storage/):**\n- keys.ts: StorageKeys constants, IdPrefixes\n- idb.ts: IndexedDB wrapper using idb-keyval, get/set for all entities\n- seed.ts: getSeedSpaces/Groups/Bookmarks, createSeedData()\n\n**Hooks (src/hooks/):**\n- use-spaces.ts: useSpaces(), useActiveSpace(), useSpaceActions()\n- use-groups.ts: useGroups(spaceId), useSelectedGroup(), useGroupActions()\n- use-bookmarks.ts: useBookmarks(groupId), useBookmarkActions()\n- use-theme.ts: useTheme() → { theme, setTheme }\n\n**Components (src/components/):**\n- auth/: auth-guard.tsx, login-form.tsx\n- new-tab/: index.tsx, spaces-sidebar.tsx, group-tabs.tsx, bookmark-grid.tsx, bookmark-item.tsx, user-menu.tsx, add-edit-modal.tsx, empty-state.tsx\n- ui/: 13 shadcn components\n\n**Running modes:**\n- Web app: bun dev → localhost:5173\n- Extension: bun run build:extension → load dist/ in Chrome",
-      "tags": ["architecture", "structure", "implementation"],
+      "tags": [
+        "architecture",
+        "structure",
+        "implementation"
+      ],
       "createdAt": "2025-12-25T15:27:48.944Z"
     },
     {
       "id": "mjlmdgo2kztozqhxud",
       "featureId": "mjlmd1xznv809w006a",
       "content": "## Zustand to Reatom Migration Analysis\n\n### Current State (Zustand)\n**3 Stores:**\n1. `auth-store.ts` (141 lines) - user, isAuthenticated, isLoading, isInitialized + initialize(), login(), logout(), updateSettings()\n2. `data-store.ts` (391 lines) - spaces[], groups[], bookmarks[], isLoading + loadAllData() + CRUD for each entity + reorder operations\n3. `ui-store.ts` (109 lines) - activeSpaceId, selectedGroupId, modalType, modalEntity, theme + navigation/modal/theme actions\n\n**4 Hooks:**\n1. `use-spaces.ts` - useSpaces(), useActiveSpace(), useSpaceActions()\n2. `use-groups.ts` - useGroups(spaceId), useSelectedGroup(), useGroupActions()\n3. `use-bookmarks.ts` - useBookmarks(groupId), useBookmarkActions()\n4. `use-theme.ts` - useTheme()\n\n### Key Migration Considerations:\n1. **Async operations**: All CRUD operations use async IndexedDB - must use `wrap()` for context preservation\n2. **Computed values**: getGroupsBySpace, getBookmarksByGroup → convert to `computed()`\n3. **Persistence**: Theme uses localStorage, data uses IndexedDB via idb-keyval\n4. **Side effects**: Theme applies CSS class to document.documentElement\n5. **Cross-component dependencies**: Hooks access multiple stores (e.g., useSpaceActions needs auth + data + ui)\n6. **Component patterns**: Currently use `useStore(selector)` pattern, migrate to `reatomComponent` where beneficial",
-      "tags": ["migration", "zustand", "reatom", "architecture"],
+      "tags": [
+        "migration",
+        "zustand",
+        "reatom",
+        "architecture"
+      ],
       "createdAt": "2025-12-25T15:50:43.874Z"
     }
   ],
-  "activeFeatureId": "mjlmd1xznv809w006a"
+  "activeFeatureId": "mjsp8bmod2dj29p63qc"
 }
