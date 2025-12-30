@@ -819,9 +819,9 @@ Update root `package.json` with convenience scripts:
 
 ### Phase 5: Docker & Deployment
 
-- [ ] Create `server/Dockerfile`
-- [ ] Create `server/.dockerignore`
-- [ ] Test Docker build locally
+- [x] Create `server/Dockerfile`
+- [x] Create `server/.dockerignore`
+- [ ] Test Docker build locally (requires Docker daemon)
 - [ ] Configure Coolify deployment
 - [ ] Set up environment variables in Coolify
 
