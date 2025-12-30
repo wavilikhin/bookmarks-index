@@ -24,9 +24,9 @@ LABEL org.opencontainers.image.description="Bookmarks Index API Server"
 
 WORKDIR /app
 
-# Create non-root user for security
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 --ingroup nodejs bunuser
+# Create non-root user for security (Debian syntax for bun:slim)
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 --gid nodejs --shell /bin/false bunuser
 
 # Copy built artifacts and dependencies
 COPY --from=builder --chown=bunuser:nodejs /app/dist ./dist
