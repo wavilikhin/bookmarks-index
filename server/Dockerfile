@@ -18,26 +18,40 @@ RUN bun run build
 # Production stage
 FROM oven/bun:1-slim
 
+# Add labels for container metadata
+LABEL org.opencontainers.image.source="https://github.com/wavilikhin/bookmarks-index"
+LABEL org.opencontainers.image.description="Bookmarks Index API Server"
+
 WORKDIR /app
 
-# Copy built artifacts and dependencies
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/node_modules ./node_modules
+# Create non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 --ingroup nodejs bunuser
 
-# Copy drizzle config and migrations (if needed for runtime migrations)
-COPY --from=builder /app/drizzle.config.ts ./
-COPY --from=builder /app/src/db ./src/db
+# Copy built artifacts and dependencies
+COPY --from=builder --chown=bunuser:nodejs /app/dist ./dist
+COPY --from=builder --chown=bunuser:nodejs /app/package.json ./
+COPY --from=builder --chown=bunuser:nodejs /app/node_modules ./node_modules
+
+# Copy drizzle config and schema for runtime migrations
+COPY --from=builder --chown=bunuser:nodejs /app/drizzle.config.ts ./
+COPY --from=builder --chown=bunuser:nodejs /app/src/db ./src/db
+
+# Copy drizzle migrations folder (will be empty if not generated yet)
+COPY --from=builder --chown=bunuser:nodejs /app/drizzle ./drizzle
 
 # Set production environment
 ENV NODE_ENV=production
 
+# Switch to non-root user
+USER bunuser
+
 # Expose port
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3000/health || exit 1
+# Health check using bun (curl/wget not available in slim image)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD bun -e "fetch('http://localhost:3000/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
 
-# Start the server
+# Start the server (migrations run on startup if RUN_MIGRATIONS=true)
 CMD ["bun", "run", "start"]

@@ -87,6 +87,14 @@
       "status": "completed",
       "createdAt": "2025-12-30T09:02:41.279Z",
       "updatedAt": "2025-12-30T09:11:27.962Z"
+    },
+    {
+      "id": "mjsp8bmod2dj29p63qc",
+      "name": "Coolify + Supabase Deployment Pipeline",
+      "description": "Design and implement CI/CD pipeline with GitHub Actions → GHCR → Coolify, with internal Docker network access to Supabase PostgreSQL",
+      "status": "completed",
+      "createdAt": "2025-12-30T14:45:06.144Z",
+      "updatedAt": "2025-12-30T14:55:57.131Z"
     }
   ],
   "plans": [
@@ -662,6 +670,45 @@
       "status": "active",
       "createdAt": "2025-12-30T09:06:41.301Z",
       "updatedAt": "2025-12-30T09:11:26.718Z"
+    },
+    {
+      "id": "mjspgdyu0xdj22fvr25",
+      "featureId": "mjsp8bmod2dj29p63qc",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Write comprehensive devops-plan.md with all implementation details",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Update Dockerfile with security hardening (non-root user, proper healthcheck)",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Create GitHub Actions workflow for CI/CD pipeline",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Create database role SQL scripts for least-privilege access",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Update server code for migrations on startup",
+          "status": "completed"
+        },
+        {
+          "id": "step-5",
+          "description": "Create verification checklist and rollback procedures",
+          "status": "completed"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2025-12-30T14:51:22.422Z",
+      "updatedAt": "2025-12-30T14:55:52.214Z"
     }
   ],
   "logs": [
@@ -790,6 +837,27 @@
       "type": "decision",
       "content": "Completed Phase 4: Migration & Sync implementation including migration service, state management atoms, migration dialog component, and auth flow integration",
       "timestamp": "2025-12-30T09:11:33.572Z"
+    },
+    {
+      "id": "mjspgah002r165s2jt8v",
+      "featureId": "mjsp8bmod2dj29p63qc",
+      "type": "discovery",
+      "content": "Gathered deployment requirements: Domain bookmarksapi.web-orc.com, auto-deploy on main, migrations on startup, Chrome extension only CORS, private GHCR repo wavilikhin/bookmarks-index. Supabase network: lowoco8g0ow8okosoooogk4o, DB container: supabase-db-lowoco8g0ow8okosoooogk4o",
+      "timestamp": "2025-12-30T14:51:17.892Z"
+    },
+    {
+      "id": "mjspmamf1cw3a0ltk2",
+      "featureId": "mjsp8bmod2dj29p63qc",
+      "type": "decision",
+      "content": "Completed DevOps implementation: Dockerfile hardening, GitHub Actions CI/CD workflow, DB role SQL scripts, migration-on-startup support, comprehensive devops-plan.md documentation",
+      "timestamp": "2025-12-30T14:55:58.023Z"
+    },
+    {
+      "id": "mjspp95h13b9gzdx1hma",
+      "featureId": "mjsp8bmod2dj29p63qc",
+      "type": "decision",
+      "content": "Migration strategy change: Cannot run migrations locally since Postgres is internal-only. Will use RUN_MIGRATIONS=true on first deploy, or run migrations via docker exec on VPS after deployment.",
+      "timestamp": "2025-12-30T14:58:16.085Z"
     }
   ],
   "notes": [
@@ -817,5 +885,5 @@
       "createdAt": "2025-12-25T15:50:43.874Z"
     }
   ],
-  "activeFeatureId": "mjsczz3znbaje08s3vj"
+  "activeFeatureId": "mjsp8bmod2dj29p63qc"
 }
