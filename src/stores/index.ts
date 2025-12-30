@@ -16,3 +16,23 @@ export { userIdAtom, isAuthenticatedAtom } from './auth/atoms'
 export { activeSpaceIdAtom, selectedGroupIdAtom, modalTypeAtom, modalEntityAtom, themeAtom } from './ui/atoms'
 
 export { setActiveSpace, setSelectedGroup, openModal, closeModal, setTheme } from './ui/actions'
+
+// ============================================
+// Migration Module
+// ============================================
+export {
+  migrationStateAtom,
+  migrationDialogOpenAtom,
+  migrationInProgressAtom,
+  migrationErrorAtom,
+  migrationChoiceAtom,
+  setMigrationState,
+  openMigrationDialog,
+  closeMigrationDialog,
+  setMigrationInProgress,
+  setMigrationError,
+  resetMigrationState,
+  checkMigration,
+  executeMigration,
+  skipMigrationAction
+} from './migration'

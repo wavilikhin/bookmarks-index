@@ -812,10 +812,10 @@ Update root `package.json` with convenience scripts:
 
 ### Phase 4: Migration & Sync
 
-- [ ] Create migration service (`src/lib/storage/migration.ts`)
-- [ ] Create migration dialog component
-- [ ] Integrate migration check into auth flow
-- [ ] Remove seed data creation logic
+- [x] Create migration service (`src/lib/storage/migration.ts`)
+- [x] Create migration dialog component
+- [x] Integrate migration check into auth flow
+- [x] Remove seed data creation logic (seed data kept for testing but not used in auth flow)
 
 ### Phase 5: Docker & Deployment
 
