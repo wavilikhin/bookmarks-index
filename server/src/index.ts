@@ -95,10 +95,33 @@ app.get('/health', (c) => {
   })
 })
 
-// Debug endpoint to verify Sentry integration (only in development)
+// Debug endpoints to verify Sentry integration (only in development)
 if (process.env.NODE_ENV !== 'production') {
+  // Test error capture
   app.get('/debug-sentry', () => {
+    Sentry.logger.info('User triggered test error', {
+      action: 'test_error_endpoint'
+    })
     throw new Error('My first Sentry error!')
+  })
+
+  // Test all log levels - doesn't throw, just logs
+  app.get('/debug-sentry-logs', (c) => {
+    const testId = crypto.randomUUID().slice(0, 8)
+
+    Sentry.logger.trace('Trace level log', { testId, level: 'trace' })
+    Sentry.logger.debug('Debug level log', { testId, level: 'debug' })
+    Sentry.logger.info('Info level log', { testId, level: 'info' })
+    Sentry.logger.warn('Warning level log', { testId, level: 'warn' })
+    Sentry.logger.error('Error level log', { testId, level: 'error' })
+    Sentry.logger.fatal('Fatal level log', { testId, level: 'fatal' })
+
+    return c.json({
+      success: true,
+      message: 'Sent 6 test logs to Sentry (trace, debug, info, warn, error, fatal)',
+      testId,
+      checkSentryDashboard: 'https://sentry.io → Logs'
+    })
   })
 }
 
