@@ -1,10 +1,12 @@
 import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch'
-import { verifyClerkToken } from './lib/auth'
+import type { Context as HonoContext } from 'hono'
 import { db } from './db/client'
 
-export async function createContext({ req }: FetchCreateContextFnOptions) {
-  const authHeader = req.headers.get('authorization')
-  const { userId } = await verifyClerkToken(authHeader)
+export async function createContext({ req }: FetchCreateContextFnOptions, c: HonoContext) {
+  // Get userId from Hono context (set by authMiddleware)
+  // This avoids verifying the token twice
+  const userId = c.get('userId') ?? null
+
   return { db, userId }
 }
 

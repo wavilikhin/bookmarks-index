@@ -3,11 +3,17 @@ import { cors } from 'hono/cors'
 import { trpcServer } from '@hono/trpc-server'
 import { appRouter } from './routers'
 import { createContext } from './context'
+import { logger } from './lib/logger'
+import { requestLogger } from './lib/logger/middleware'
+import { authMiddleware } from './lib/auth'
+
+const serverLogger = logger.child('server')
+const migrationLogger = logger.child('migrations')
 
 // Run migrations on startup if enabled
 async function runMigrations() {
   if (process.env.RUN_MIGRATIONS !== 'true') {
-    console.log('[migrations] Skipped (RUN_MIGRATIONS != true)')
+    migrationLogger.debug('Skipped (RUN_MIGRATIONS != true)')
     return
   }
 
@@ -20,15 +26,15 @@ async function runMigrations() {
     throw new Error('DATABASE_URL is required for migrations')
   }
 
-  console.log('[migrations] Starting database migrations...')
+  migrationLogger.info('Starting database migrations...')
   const migrationClient = postgres(connectionString, { max: 1 })
   const db = drizzle(migrationClient)
 
   try {
     await migrate(db, { migrationsFolder: './drizzle' })
-    console.log('[migrations] Completed successfully')
+    migrationLogger.info('Completed successfully')
   } catch (error) {
-    console.error('[migrations] Failed:', error)
+    migrationLogger.error('Failed', error instanceof Error ? error : undefined)
     throw error
   } finally {
     await migrationClient.end()
@@ -66,6 +72,13 @@ app.use(
   })
 )
 
+// Auth middleware - extracts userId and stores in Hono context
+// Must run before request logger so userId is available for logging
+app.use('/*', authMiddleware())
+
+// Request logging middleware (skip health checks to reduce noise)
+app.use('/*', requestLogger({ skip: ['/health'] }))
+
 // Health check endpoint (for container health checks)
 app.get('/health', (c) => {
   return c.json({
@@ -88,6 +101,7 @@ app.get('/ready', async (c) => {
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error'
+    serverLogger.error('Readiness check failed', error instanceof Error ? error : undefined)
     return c.json(
       {
         status: 'not_ready',
@@ -112,10 +126,15 @@ app.use(
 // Run migrations before starting server
 await runMigrations()
 
-console.log(`[server] Starting on port ${process.env.PORT || 3000}`)
+const port = process.env.PORT || 3000
+serverLogger.info('Starting server', {
+  port,
+  env: process.env.NODE_ENV || 'development',
+  logLevel: process.env.LOG_LEVEL || 'default'
+})
 
 export default {
-  port: process.env.PORT || 3000,
+  port,
   fetch: app.fetch
 }
 

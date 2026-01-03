@@ -242,7 +242,7 @@ server/
 │   │   ├── sync.ts
 │   │   └── index.ts         # Root appRouter
 │   ├── lib/
-│   │   ├── auth.ts          # Clerk JWT verification + Hono auth middleware
+│   │   ├── auth.ts          # Clerk JWT verification
 │   │   └── logger/          # Logging library
 │   │       ├── index.ts     # Logger singleton + exports
 │   │       ├── logger.ts    # Core Logger class

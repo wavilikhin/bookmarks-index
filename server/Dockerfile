@@ -28,6 +28,9 @@ WORKDIR /app
 RUN groupadd --system --gid 1001 nodejs && \
     useradd --system --uid 1001 --gid nodejs --shell /bin/false bunuser
 
+# Create logs directory with proper permissions
+RUN mkdir -p /app/logs && chown -R bunuser:nodejs /app/logs
+
 # Copy built artifacts and dependencies
 COPY --from=builder --chown=bunuser:nodejs /app/dist ./dist
 COPY --from=builder --chown=bunuser:nodejs /app/package.json ./
@@ -42,6 +45,8 @@ COPY --from=builder --chown=bunuser:nodejs /app/drizzle ./drizzle
 
 # Set production environment
 ENV NODE_ENV=production
+ENV LOG_TO_FILE=true
+ENV LOG_DIR=/app/logs
 
 # Switch to non-root user
 USER bunuser

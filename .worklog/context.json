@@ -95,6 +95,14 @@
       "status": "completed",
       "createdAt": "2025-12-30T14:45:06.144Z",
       "updatedAt": "2025-12-30T14:55:57.131Z"
+    },
+    {
+      "id": "mjwm7adijm3gexljtmj",
+      "name": "Server Logging System",
+      "description": "Add a comprehensive, extensible logging system with pretty printing, file output, and env-controlled log levels",
+      "status": "completed",
+      "createdAt": "2026-01-02T08:31:23.718Z",
+      "updatedAt": "2026-01-02T08:40:50.131Z"
     }
   ],
   "plans": [
@@ -709,6 +717,55 @@
       "status": "active",
       "createdAt": "2025-12-30T14:51:22.422Z",
       "updatedAt": "2025-12-30T14:55:52.214Z"
+    },
+    {
+      "id": "mjwm7erzeviql3f2eyd",
+      "featureId": "mjwm7adijm3gexljtmj",
+      "steps": [
+        {
+          "id": "step-0",
+          "description": "Create logger library with extensible transport architecture",
+          "status": "completed"
+        },
+        {
+          "id": "step-1",
+          "description": "Implement console transport with pretty printing",
+          "status": "completed"
+        },
+        {
+          "id": "step-2",
+          "description": "Implement file transport for logs and errors",
+          "status": "completed"
+        },
+        {
+          "id": "step-3",
+          "description": "Add env-based log level configuration",
+          "status": "completed"
+        },
+        {
+          "id": "step-4",
+          "description": "Create request logging middleware for Hono",
+          "status": "completed"
+        },
+        {
+          "id": "step-5",
+          "description": "Integrate logger throughout existing server code",
+          "status": "completed"
+        },
+        {
+          "id": "step-6",
+          "description": "Update Dockerfile for log directory and .env.example",
+          "status": "completed"
+        },
+        {
+          "id": "step-7",
+          "description": "Test and document usage",
+          "status": "completed"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2026-01-02T08:31:29.423Z",
+      "updatedAt": "2026-01-02T08:40:49.132Z"
     }
   ],
   "logs": [
@@ -858,6 +915,13 @@
       "type": "decision",
       "content": "Migration strategy change: Cannot run migrations locally since Postgres is internal-only. Will use RUN_MIGRATIONS=true on first deploy, or run migrations via docker exec on VPS after deployment.",
       "timestamp": "2025-12-30T14:58:16.085Z"
+    },
+    {
+      "id": "mjwmc0cnujknboe592",
+      "featureId": "mjwm7adijm3gexljtmj",
+      "type": "decision",
+      "content": "Logging design decisions: Standard levels (debug/info/warn/error), files at /app/logs/{app,error}.log, no rotation for now, JSON format for files, pretty print for console, request logging with method/path/status/duration/requestId/userId (no body/query params)",
+      "timestamp": "2026-01-02T08:35:04.007Z"
     }
   ],
   "notes": [
@@ -885,5 +949,5 @@
       "createdAt": "2025-12-25T15:50:43.874Z"
     }
   ],
-  "activeFeatureId": "mjsp8bmod2dj29p63qc"
+  "activeFeatureId": "mjwm7adijm3gexljtmj"
 }
